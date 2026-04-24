@@ -25,6 +25,7 @@ class HanziWord:
     translation: Optional[str]
     source: Optional[str]  # Where the translation came from
     created_at: Optional[str]
+    reviewed: bool = False  # Whether the word has been manually reviewed
 
 
 class HanziStore:
@@ -55,12 +56,21 @@ class HanziStore:
                     pinyin TEXT,
                     translation TEXT,
                     source TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    reviewed BOOLEAN DEFAULT 0
                 )
             """)
             conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_hanzi ON hanzi_words(hanzi)
             """)
+            # Add reviewed column if it doesn't exist (for existing databases)
+            try:
+                conn.execute("""
+                    ALTER TABLE hanzi_words ADD COLUMN reviewed BOOLEAN DEFAULT 0
+                """)
+            except sqlite3.OperationalError:
+                # Column already exists, ignore
+                pass
             conn.commit()
 
     def _lookup_translation(self, hanzi: str) -> tuple[Optional[str], Optional[str]]:
@@ -173,7 +183,7 @@ class HanziStore:
         """Retrieve a single word by its hanzi."""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
-                "SELECT id, hanzi, pinyin, translation, source, created_at "
+                "SELECT id, hanzi, pinyin, translation, source, created_at, reviewed "
                 "FROM hanzi_words WHERE hanzi = ?",
                 (hanzi,)
             )
@@ -187,6 +197,7 @@ class HanziStore:
         search: Optional[str] = None,
         has_translation: Optional[bool] = None,
         has_pinyin: Optional[bool] = None,
+        reviewed: Optional[bool] = None,
         limit: Optional[int] = 100,
         offset: int = 0
     ) -> List[HanziWord]:
@@ -197,13 +208,14 @@ class HanziStore:
             search: Search string for hanzi or translation (partial match)
             has_translation: Filter by presence/absence of translation
             has_pinyin: Filter by presence/absence of pinyin
+            reviewed: Filter by reviewed status
             limit: Maximum number of results (None for no limit)
             offset: Offset for pagination
 
         Returns:
             List of HanziWord objects matching the filters
         """
-        query = "SELECT id, hanzi, pinyin, translation, source, created_at FROM hanzi_words WHERE 1=1"
+        query = "SELECT id, hanzi, pinyin, translation, source, created_at, reviewed FROM hanzi_words WHERE 1=1"
         params: List[Any] = []
 
         if search:
@@ -223,6 +235,10 @@ class HanziStore:
             else:
                 query += " AND (pinyin IS NULL OR pinyin = '')"
 
+        if reviewed is not None:
+            query += " AND reviewed = ?"
+            params.append(1 if reviewed else 0)
+
         query += " ORDER BY created_at DESC"
 
         if limit is not None:
@@ -235,9 +251,16 @@ class HanziStore:
             return [HanziWord(*row) for row in rows]
 
     def update_word(self, hanzi: str, pinyin: Optional[str] = None,
-                    translation: Optional[str] = None) -> Optional[HanziWord]:
+                    translation: Optional[str] = None,
+                    mark_reviewed: bool = True) -> Optional[HanziWord]:
         """
         Update an existing word's pinyin or translation.
+
+        Args:
+            hanzi: The Chinese word to update
+            pinyin: Optional new pinyin
+            translation: Optional new translation
+            mark_reviewed: Whether to mark the word as reviewed (default True)
 
         Returns:
             Updated HanziWord or None if word not found
@@ -253,6 +276,8 @@ class HanziStore:
             params.append(translation)
             updates.append("source = ?")
             params.append("manual")
+        if mark_reviewed:
+            updates.append("reviewed = 1")
 
         if not updates:
             return self.get_word(hanzi)
@@ -267,6 +292,16 @@ class HanziStore:
             conn.commit()
 
         return self.get_word(hanzi)
+
+    def mark_reviewed(self, hanzi: str) -> bool:
+        """Mark a word as reviewed. Returns True if marked."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute(
+                "UPDATE hanzi_words SET reviewed = 1 WHERE hanzi = ?",
+                (hanzi,)
+            )
+            conn.commit()
+            return cursor.rowcount > 0
 
     def delete_word(self, hanzi: str) -> bool:
         """Delete a word by hanzi. Returns True if deleted."""
