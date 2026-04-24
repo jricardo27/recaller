@@ -33,9 +33,12 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   useEffect(() => {
     if (!session) {
       startSession(type, words, difficulty);
+    } else {
+      endSession();
+      startSession(type, words, difficulty);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [type]);
 
   // Check if session is complete
   useEffect(() => {
@@ -220,14 +223,14 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
 
             {exercise.type === 'hanzi-to-pinyin' && (
               <div>
-                <div className="text-8xl font-bold text-gray-800 mb-2">{exercise.question}</div>
+                <div className="text-7xl text-gray-800 mb-2 font-hanzi">{exercise.question}</div>
                 <p className="text-gray-500">Select the correct pinyin</p>
               </div>
             )}
 
             {exercise.type === 'pinyin-to-hanzi' && (
               <div>
-                <div className="text-4xl font-medium text-blue-600 mb-2">{exercise.question}</div>
+                <div className="text-7xl text-blue-600 mb-2 font-hanzi-sans">{exercise.question}</div>
                 <p className="text-gray-500">Select the correct hanzi</p>
               </div>
             )}
@@ -281,7 +284,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-xl font-medium">{option.text}</div>
+                      <div className={`text-3xl ${exercise.type === 'pinyin-to-hanzi' || exercise.type === 'hanzi-to-english' ? 'font-hanzi-sans' : ''}`}>{option.text}</div>
                       {option.subtext && (
                         <div className="text-sm text-gray-500 mt-1">{option.subtext}</div>
                       )}

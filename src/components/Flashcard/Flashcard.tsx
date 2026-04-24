@@ -64,7 +64,7 @@ export function Flashcard({ word, onRate, onSkip, imageUrl }: FlashcardProps) {
         <div className="p-6">
           {/* Hanzi - Always visible */}
           <div className="text-center mb-6">
-            <h2 className="text-6xl font-bold text-gray-800 mb-2">{word.hanzi}</h2>
+            <h2 className="text-7xl text-gray-800 mb-2 font-hanzi">{word.hanzi}</h2>
             {word.isNew && (
               <span className="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
                 New

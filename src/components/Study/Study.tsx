@@ -170,6 +170,7 @@ export function Study({ onFinish, onExit }: StudyProps) {
 
       {/* Flashcard */}
       <Flashcard
+        key={currentWord.id}
         word={currentWord}
         onRate={handleRate}
         onSkip={handleSkip}
