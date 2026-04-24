@@ -37,6 +37,3 @@ __pycache__/
 *.so
 .Python
 *.egg-info/
-
-# Database exports (generated files)
-src/data/words.json

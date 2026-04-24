@@ -64,12 +64,13 @@ class HanziStore:
                 CREATE INDEX IF NOT EXISTS idx_hanzi ON hanzi_words(hanzi)
             """)
             # Add reviewed column if it doesn't exist (for existing databases)
-            cursor = conn.execute("PRAGMA table_info(hanzi_words)")
-            columns = [row[1] for row in cursor.fetchall()]
-            if "reviewed" not in columns:
+            try:
                 conn.execute("""
                     ALTER TABLE hanzi_words ADD COLUMN reviewed BOOLEAN DEFAULT 0
                 """)
+            except sqlite3.OperationalError:
+                # Column already exists, ignore
+                pass
             conn.commit()
 
     def _lookup_translation(self, hanzi: str) -> tuple[Optional[str], Optional[str]]:
