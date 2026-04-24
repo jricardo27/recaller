@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "exportedAt": "2026-04-22T21:46:52.041293",
-  "wordCount": 14,
-  "source": "/Users/ricardoperez/pcode/learn_chinese/utils/hanzi_words/hanzi_words.db",
+  "exportedAt": "2026-04-24T22:13:43.576794",
+  "wordCount": 388,
+  "source": "/Users/ricardoperez/pcode/recaller/utils/hanzi_words/hanzi_words.db",
   "words": [
     {
       "id": 2,
@@ -21,7 +21,7 @@
     {
       "id": 4,
       "hanzi": "北京",
-      "pinyin": "",
+      "pinyin": "běi jīng",
       "translation": "Beijing",
       "enabled": true
     },
@@ -36,21 +36,21 @@
       "id": 6,
       "hanzi": "去",
       "pinyin": "qù",
-      "translation": "went",
+      "translation": "go",
       "enabled": true
     },
     {
       "id": 7,
       "hanzi": "饭店",
       "pinyin": "fàn diàn",
-      "translation": "Hotels",
+      "translation": "restaurant",
       "enabled": true
     },
     {
       "id": 8,
       "hanzi": "吃",
       "pinyin": "chī",
-      "translation": "eats",
+      "translation": "eat",
       "enabled": true
     },
     {
@@ -78,14 +78,14 @@
       "id": 12,
       "hanzi": "再见",
       "pinyin": "zài jiàn",
-      "translation": "gone",
+      "translation": "goodbye",
       "enabled": true
     },
     {
       "id": 13,
       "hanzi": "学习",
       "pinyin": "xué xí",
-      "translation": "learning:",
+      "translation": "study/learn",
       "enabled": true
     },
     {
@@ -100,6 +100,2624 @@
       "hanzi": "朋友",
       "pinyin": "péng yǒu",
       "translation": "Friends",
+      "enabled": true
+    },
+    {
+      "id": 16,
+      "hanzi": "我",
+      "pinyin": "wǒ",
+      "translation": "I/me",
+      "enabled": true
+    },
+    {
+      "id": 17,
+      "hanzi": "在",
+      "pinyin": "zài",
+      "translation": "Inside",
+      "enabled": true
+    },
+    {
+      "id": 18,
+      "hanzi": "家",
+      "pinyin": "jiā",
+      "translation": "Home",
+      "enabled": true
+    },
+    {
+      "id": 19,
+      "hanzi": "吃饭",
+      "pinyin": "chī fàn",
+      "translation": "Eating",
+      "enabled": true
+    },
+    {
+      "id": 20,
+      "hanzi": "你",
+      "pinyin": "nǐ",
+      "translation": "you",
+      "enabled": true
+    },
+    {
+      "id": 21,
+      "hanzi": "和",
+      "pinyin": "hé",
+      "translation": "And",
+      "enabled": true
+    },
+    {
+      "id": 22,
+      "hanzi": "你的",
+      "pinyin": "nǐ de",
+      "translation": "Your",
+      "enabled": true
+    },
+    {
+      "id": 23,
+      "hanzi": "老婆",
+      "pinyin": "lǎo pó",
+      "translation": "Wife",
+      "enabled": true
+    },
+    {
+      "id": 24,
+      "hanzi": "有/没有",
+      "pinyin": "yǒu / méi yǒu",
+      "translation": "Yes / No",
+      "enabled": true
+    },
+    {
+      "id": 25,
+      "hanzi": "喜欢",
+      "pinyin": "xǐ huān",
+      "translation": "like",
+      "enabled": true
+    },
+    {
+      "id": 26,
+      "hanzi": "去的",
+      "pinyin": "qù de",
+      "translation": "Go",
+      "enabled": true
+    },
+    {
+      "id": 27,
+      "hanzi": "这个",
+      "pinyin": "zhè ge",
+      "translation": "The",
+      "enabled": true
+    },
+    {
+      "id": 28,
+      "hanzi": "几点",
+      "pinyin": "jǐ diǎn",
+      "translation": "what time",
+      "enabled": true
+    },
+    {
+      "id": 29,
+      "hanzi": "关门",
+      "pinyin": "guān mén",
+      "translation": "close door",
+      "enabled": true
+    },
+    {
+      "id": 30,
+      "hanzi": "下午",
+      "pinyin": "xià wǔ",
+      "translation": "Afternoon",
+      "enabled": true
+    },
+    {
+      "id": 31,
+      "hanzi": "五点",
+      "pinyin": "wǔ diǎn",
+      "translation": "5 o'clock",
+      "enabled": true
+    },
+    {
+      "id": 32,
+      "hanzi": "开门",
+      "pinyin": "kāi mén",
+      "translation": "open door",
+      "enabled": true
+    },
+    {
+      "id": 33,
+      "hanzi": "晚上",
+      "pinyin": "wǎn shàng",
+      "translation": "Night",
+      "enabled": true
+    },
+    {
+      "id": 34,
+      "hanzi": "十",
+      "pinyin": "shí",
+      "translation": "ten",
+      "enabled": true
+    },
+    {
+      "id": 35,
+      "hanzi": "一",
+      "pinyin": "yī",
+      "translation": "one",
+      "enabled": true
+    },
+    {
+      "id": 36,
+      "hanzi": "乐器",
+      "pinyin": "yuè qì",
+      "translation": "Musical Instruments",
+      "enabled": true
+    },
+    {
+      "id": 37,
+      "hanzi": "胶棒",
+      "pinyin": "jiāo bàng",
+      "translation": "Glue stick",
+      "enabled": true
+    },
+    {
+      "id": 38,
+      "hanzi": "耳机",
+      "pinyin": "ěr jī",
+      "translation": "Headphones",
+      "enabled": true
+    },
+    {
+      "id": 39,
+      "hanzi": "黄色",
+      "pinyin": "huáng sè",
+      "translation": "Yellow",
+      "enabled": true
+    },
+    {
+      "id": 40,
+      "hanzi": "的",
+      "pinyin": "de",
+      "translation": "'s/of",
+      "enabled": true
+    },
+    {
+      "id": 41,
+      "hanzi": "香蕉",
+      "pinyin": "xiāng jiāo",
+      "translation": "Banana",
+      "enabled": true
+    },
+    {
+      "id": 42,
+      "hanzi": "最",
+      "pinyin": "zuì",
+      "translation": "Most",
+      "enabled": true
+    },
+    {
+      "id": 43,
+      "hanzi": "伞",
+      "pinyin": "sǎn",
+      "translation": "umbrella",
+      "enabled": true
+    },
+    {
+      "id": 44,
+      "hanzi": "白事",
+      "pinyin": "bái shì",
+      "translation": "funeral",
+      "enabled": true
+    },
+    {
+      "id": 45,
+      "hanzi": "绿色",
+      "pinyin": "lǜ sè",
+      "translation": "Green",
+      "enabled": true
+    },
+    {
+      "id": 46,
+      "hanzi": "蓝色",
+      "pinyin": "lán sè",
+      "translation": "BLUE",
+      "enabled": true
+    },
+    {
+      "id": 47,
+      "hanzi": "蓝莓",
+      "pinyin": "lán méi",
+      "translation": "Blueberry",
+      "enabled": true
+    },
+    {
+      "id": 48,
+      "hanzi": "红色",
+      "pinyin": "hóng sè",
+      "translation": "red",
+      "enabled": true
+    },
+    {
+      "id": 49,
+      "hanzi": "蝴蝶结",
+      "pinyin": "hú dié jié",
+      "translation": "bowknot",
+      "enabled": true
+    },
+    {
+      "id": 50,
+      "hanzi": "门",
+      "pinyin": "mén",
+      "translation": "door",
+      "enabled": true
+    },
+    {
+      "id": 51,
+      "hanzi": "月",
+      "pinyin": "yuè",
+      "translation": "Month",
+      "enabled": true
+    },
+    {
+      "id": 52,
+      "hanzi": "号",
+      "pinyin": "hào",
+      "translation": "number/day",
+      "enabled": true
+    },
+    {
+      "id": 53,
+      "hanzi": "猫",
+      "pinyin": "māo",
+      "translation": "cat",
+      "enabled": true
+    },
+    {
+      "id": 54,
+      "hanzi": "狗",
+      "pinyin": "gǒu",
+      "translation": "Dog",
+      "enabled": true
+    },
+    {
+      "id": 55,
+      "hanzi": "鸡",
+      "pinyin": "jī",
+      "translation": "Chicken",
+      "enabled": true
+    },
+    {
+      "id": 56,
+      "hanzi": "兔子",
+      "pinyin": "tù zi",
+      "translation": "Rabbit",
+      "enabled": true
+    },
+    {
+      "id": 57,
+      "hanzi": "羊",
+      "pinyin": "yáng",
+      "translation": "Sheep",
+      "enabled": true
+    },
+    {
+      "id": 58,
+      "hanzi": "小羊",
+      "pinyin": "xiǎo yáng",
+      "translation": "Lamb",
+      "enabled": true
+    },
+    {
+      "id": 59,
+      "hanzi": "山",
+      "pinyin": "shān",
+      "translation": "Mountain",
+      "enabled": true
+    },
+    {
+      "id": 60,
+      "hanzi": "上",
+      "pinyin": "shàng",
+      "translation": "Upward",
+      "enabled": true
+    },
+    {
+      "id": 61,
+      "hanzi": "有",
+      "pinyin": "yǒu",
+      "translation": "With",
+      "enabled": true
+    },
+    {
+      "id": 62,
+      "hanzi": "只",
+      "pinyin": "zhǐ",
+      "translation": "No.",
+      "enabled": true
+    },
+    {
+      "id": 63,
+      "hanzi": "三",
+      "pinyin": "sān",
+      "translation": "The Third Semester",
+      "enabled": true
+    },
+    {
+      "id": 64,
+      "hanzi": "觉得",
+      "pinyin": "jué de",
+      "translation": "\"I do,\"",
+      "enabled": true
+    },
+    {
+      "id": 65,
+      "hanzi": "咖啡",
+      "pinyin": "kā fēi",
+      "translation": "Coffee",
+      "enabled": true
+    },
+    {
+      "id": 66,
+      "hanzi": "好",
+      "pinyin": "hǎo",
+      "translation": "Okay!",
+      "enabled": true
+    },
+    {
+      "id": 67,
+      "hanzi": "吗",
+      "pinyin": "ma",
+      "translation": "Right?..",
+      "enabled": true
+    },
+    {
+      "id": 68,
+      "hanzi": "非常",
+      "pinyin": "fēi cháng",
+      "translation": "Very high",
+      "enabled": true
+    },
+    {
+      "id": 69,
+      "hanzi": "很",
+      "pinyin": "hěn",
+      "translation": "A lot",
+      "enabled": true
+    },
+    {
+      "id": 70,
+      "hanzi": "比较",
+      "pinyin": "bǐ jiào",
+      "translation": "Comparison",
+      "enabled": true
+    },
+    {
+      "id": 71,
+      "hanzi": "一般般",
+      "pinyin": "yì bān bān",
+      "translation": "so so",
+      "enabled": true
+    },
+    {
+      "id": 72,
+      "hanzi": "不太",
+      "pinyin": "bù tài",
+      "translation": "Somewhat",
+      "enabled": true
+    },
+    {
+      "id": 73,
+      "hanzi": "不",
+      "pinyin": "bù",
+      "translation": "Do",
+      "enabled": true
+    },
+    {
+      "id": 74,
+      "hanzi": "一点儿也不",
+      "pinyin": "yì diǎn ér yě bù",
+      "translation": "not in the least",
+      "enabled": true
+    },
+    {
+      "id": 75,
+      "hanzi": "蚕蛹",
+      "pinyin": "cán yǒng",
+      "translation": "Bombyx mori",
+      "enabled": true
+    },
+    {
+      "id": 76,
+      "hanzi": "试",
+      "pinyin": "shì",
+      "translation": "Specimen",
+      "enabled": true
+    },
+    {
+      "id": 77,
+      "hanzi": "试一试",
+      "pinyin": "shì yī shì",
+      "translation": "give it a try",
+      "enabled": true
+    },
+    {
+      "id": 78,
+      "hanzi": "忘了",
+      "pinyin": "wàng le",
+      "translation": "I've forgotten",
+      "enabled": true
+    },
+    {
+      "id": 79,
+      "hanzi": "茄子",
+      "pinyin": "qié zi",
+      "translation": "Aubergines",
+      "enabled": true
+    },
+    {
+      "id": 80,
+      "hanzi": "汤",
+      "pinyin": "tāng",
+      "translation": "Soup",
+      "enabled": true
+    },
+    {
+      "id": 81,
+      "hanzi": "周末",
+      "pinyin": "zhōu mò",
+      "translation": "Akhir Pekan",
+      "enabled": true
+    },
+    {
+      "id": 82,
+      "hanzi": "超市",
+      "pinyin": "chāo shì",
+      "translation": "Our Shop",
+      "enabled": true
+    },
+    {
+      "id": 83,
+      "hanzi": "好看",
+      "pinyin": "hǎo kàn",
+      "translation": "Looks good",
+      "enabled": true
+    },
+    {
+      "id": 84,
+      "hanzi": "好吃",
+      "pinyin": "hǎo chī",
+      "translation": "Yummy",
+      "enabled": true
+    },
+    {
+      "id": 85,
+      "hanzi": "好听",
+      "pinyin": "hǎo tīng",
+      "translation": "nice to hear",
+      "enabled": true
+    },
+    {
+      "id": 86,
+      "hanzi": "好喝",
+      "pinyin": "hǎo hē",
+      "translation": "This drink is delicious",
+      "enabled": true
+    },
+    {
+      "id": 87,
+      "hanzi": "好玩儿",
+      "pinyin": "hǎo wán ér",
+      "translation": "That's funny.",
+      "enabled": true
+    },
+    {
+      "id": 88,
+      "hanzi": "什么",
+      "pinyin": "shén me",
+      "translation": "What?",
+      "enabled": true
+    },
+    {
+      "id": 89,
+      "hanzi": "拿铁",
+      "pinyin": "ná tiě",
+      "translation": "latte",
+      "enabled": true
+    },
+    {
+      "id": 90,
+      "hanzi": "速溶咖啡",
+      "pinyin": "sù róng kā fēi",
+      "translation": "Instant coffee",
+      "enabled": true
+    },
+    {
+      "id": 91,
+      "hanzi": "意式浓缩咖啡",
+      "pinyin": "yì shì nóng suō kā fēi",
+      "translation": "Espresso Bottega",
+      "enabled": true
+    },
+    {
+      "id": 92,
+      "hanzi": "阿凡达",
+      "pinyin": "ā fán dá",
+      "translation": "Avatar",
+      "enabled": true
+    },
+    {
+      "id": 93,
+      "hanzi": "第一部",
+      "pinyin": "dì yī bù",
+      "translation": "first part",
+      "enabled": true
+    },
+    {
+      "id": 94,
+      "hanzi": "手机",
+      "pinyin": "shǒu jī",
+      "translation": "Phone",
+      "enabled": true
+    },
+    {
+      "id": 95,
+      "hanzi": "里有",
+      "pinyin": "lǐ yǒu",
+      "translation": "Contains",
+      "enabled": true
+    },
+    {
+      "id": 96,
+      "hanzi": "日历",
+      "pinyin": "rì lì",
+      "translation": "Kalender",
+      "enabled": true
+    },
+    {
+      "id": 97,
+      "hanzi": "要",
+      "pinyin": "yào",
+      "translation": "to",
+      "enabled": true
+    },
+    {
+      "id": 98,
+      "hanzi": "过生日",
+      "pinyin": "guò shēng rì",
+      "translation": "Birthday",
+      "enabled": true
+    },
+    {
+      "id": 99,
+      "hanzi": "面条",
+      "pinyin": "miàn tiáo",
+      "translation": "Noodles",
+      "enabled": true
+    },
+    {
+      "id": 100,
+      "hanzi": "长寿",
+      "pinyin": "cháng shòu",
+      "translation": "Longevity",
+      "enabled": true
+    },
+    {
+      "id": 101,
+      "hanzi": "面",
+      "pinyin": "miàn",
+      "translation": "pcs",
+      "enabled": true
+    },
+    {
+      "id": 102,
+      "hanzi": "长寿面",
+      "pinyin": "cháng shòu miàn",
+      "translation": "Longevity Noodle",
+      "enabled": true
+    },
+    {
+      "id": 103,
+      "hanzi": "蛋糕",
+      "pinyin": "dàn gāo",
+      "translation": "Cake",
+      "enabled": true
+    },
+    {
+      "id": 104,
+      "hanzi": "枕头",
+      "pinyin": "zhěn tou",
+      "translation": "Pillow",
+      "enabled": true
+    },
+    {
+      "id": 105,
+      "hanzi": "岁",
+      "pinyin": "suì",
+      "translation": "years old ",
+      "enabled": true
+    },
+    {
+      "id": 106,
+      "hanzi": "女人",
+      "pinyin": "nǚ rén",
+      "translation": "Women",
+      "enabled": true
+    },
+    {
+      "id": 107,
+      "hanzi": "女生",
+      "pinyin": "nǚ shēng",
+      "translation": "Woman",
+      "enabled": true
+    },
+    {
+      "id": 108,
+      "hanzi": "个",
+      "pinyin": "gè",
+      "translation": "Pcs",
+      "enabled": true
+    },
+    {
+      "id": 109,
+      "hanzi": "人",
+      "pinyin": "rén",
+      "translation": "Pemain",
+      "enabled": true
+    },
+    {
+      "id": 110,
+      "hanzi": "一个人",
+      "pinyin": "yí gè rén",
+      "translation": "by oneself",
+      "enabled": true
+    },
+    {
+      "id": 111,
+      "hanzi": "两",
+      "pinyin": "liǎng",
+      "translation": "Tael",
+      "enabled": true
+    },
+    {
+      "id": 112,
+      "hanzi": "二",
+      "pinyin": "èr",
+      "translation": "II",
+      "enabled": true
+    },
+    {
+      "id": 113,
+      "hanzi": "第",
+      "pinyin": "dì",
+      "translation": "",
+      "enabled": true
+    },
+    {
+      "id": 114,
+      "hanzi": "男人",
+      "pinyin": "nán rén",
+      "translation": "men",
+      "enabled": true
+    },
+    {
+      "id": 115,
+      "hanzi": "大人",
+      "pinyin": "dà rén",
+      "translation": "Lord",
+      "enabled": true
+    },
+    {
+      "id": 116,
+      "hanzi": "小孩",
+      "pinyin": "xiǎo hái",
+      "translation": "Child",
+      "enabled": true
+    },
+    {
+      "id": 117,
+      "hanzi": "软糖",
+      "pinyin": "ruǎn táng",
+      "translation": "Gummies",
+      "enabled": true
+    },
+    {
+      "id": 118,
+      "hanzi": "硬糖",
+      "pinyin": "yìng táng",
+      "translation": "Hard Candy",
+      "enabled": true
+    },
+    {
+      "id": 119,
+      "hanzi": "棒棒糖",
+      "pinyin": "bàng bàng táng",
+      "translation": "Lollipop",
+      "enabled": true
+    },
+    {
+      "id": 120,
+      "hanzi": "开心",
+      "pinyin": "kāi xīn",
+      "translation": "Happy",
+      "enabled": true
+    },
+    {
+      "id": 121,
+      "hanzi": "开车",
+      "pinyin": "kāi chē",
+      "translation": "Driving",
+      "enabled": true
+    },
+    {
+      "id": 122,
+      "hanzi": "坐火车",
+      "pinyin": "zuò huǒ chē",
+      "translation": "Take the Train",
+      "enabled": true
+    },
+    {
+      "id": 123,
+      "hanzi": "坐",
+      "pinyin": "zuò",
+      "translation": "Sitting",
+      "enabled": true
+    },
+    {
+      "id": 124,
+      "hanzi": "火",
+      "pinyin": "huǒ",
+      "translation": "Fire",
+      "enabled": true
+    },
+    {
+      "id": 125,
+      "hanzi": "车",
+      "pinyin": "chē",
+      "translation": "Car",
+      "enabled": true
+    },
+    {
+      "id": 126,
+      "hanzi": "火锅",
+      "pinyin": "huǒ guō",
+      "translation": "Hot Pot",
+      "enabled": true
+    },
+    {
+      "id": 127,
+      "hanzi": "生气",
+      "pinyin": "shēng qì",
+      "translation": "Angry",
+      "enabled": true
+    },
+    {
+      "id": 128,
+      "hanzi": "她",
+      "pinyin": "tā",
+      "translation": "her",
+      "enabled": true
+    },
+    {
+      "id": 129,
+      "hanzi": "发火",
+      "pinyin": "fā huǒ",
+      "translation": "Pissed",
+      "enabled": true
+    },
+    {
+      "id": 130,
+      "hanzi": "了",
+      "pinyin": "le",
+      "translation": "Settings Updated. what double check raws pls",
+      "enabled": true
+    },
+    {
+      "id": 131,
+      "hanzi": "火山",
+      "pinyin": "huǒ shān",
+      "translation": "Volcano",
+      "enabled": true
+    },
+    {
+      "id": 132,
+      "hanzi": "上火",
+      "pinyin": "shàng huǒ",
+      "translation": "excessive internal heat",
+      "enabled": true
+    },
+    {
+      "id": 133,
+      "hanzi": "小美",
+      "pinyin": "xiǎo měi",
+      "translation": "Little Mei",
+      "enabled": true
+    },
+    {
+      "id": 134,
+      "hanzi": "离",
+      "pinyin": "lí",
+      "translation": "",
+      "enabled": true
+    },
+    {
+      "id": 135,
+      "hanzi": "远",
+      "pinyin": "yuǎn",
+      "translation": "Distant",
+      "enabled": true
+    },
+    {
+      "id": 136,
+      "hanzi": "近",
+      "pinyin": "jìn",
+      "translation": "Closer",
+      "enabled": true
+    },
+    {
+      "id": 137,
+      "hanzi": "咖啡店",
+      "pinyin": "kā fēi diàn",
+      "translation": "Cafes",
+      "enabled": true
+    },
+    {
+      "id": 138,
+      "hanzi": "几个",
+      "pinyin": "jǐ gè",
+      "translation": "several",
+      "enabled": true
+    },
+    {
+      "id": 139,
+      "hanzi": "附近",
+      "pinyin": "fù jìn",
+      "translation": "NO NAME SPACE NO KEY VALUE!!",
+      "enabled": true
+    },
+    {
+      "id": 140,
+      "hanzi": "星巴克",
+      "pinyin": "xīng bā kè",
+      "translation": "Starbucks",
+      "enabled": true
+    },
+    {
+      "id": 141,
+      "hanzi": "那是",
+      "pinyin": "nà shì",
+      "translation": "naturally",
+      "enabled": true
+    },
+    {
+      "id": 142,
+      "hanzi": "这是",
+      "pinyin": "zhè shì",
+      "translation": "That's",
+      "enabled": true
+    },
+    {
+      "id": 143,
+      "hanzi": "很近",
+      "pinyin": "hěn jìn",
+      "translation": "Very close",
+      "enabled": true
+    },
+    {
+      "id": 144,
+      "hanzi": "地铁",
+      "pinyin": "dì tiě",
+      "translation": "metro",
+      "enabled": true
+    },
+    {
+      "id": 145,
+      "hanzi": "地铁站",
+      "pinyin": "dì tiě zhàn",
+      "translation": "Subway station",
+      "enabled": true
+    },
+    {
+      "id": 146,
+      "hanzi": "机场",
+      "pinyin": "jī chǎng",
+      "translation": "Airport",
+      "enabled": true
+    },
+    {
+      "id": 147,
+      "hanzi": "酒店",
+      "pinyin": "jiǔ diàn",
+      "translation": "hotel",
+      "enabled": true
+    },
+    {
+      "id": 148,
+      "hanzi": "水果店",
+      "pinyin": "shuǐ guǒ diàn",
+      "translation": "Fruitshop",
+      "enabled": true
+    },
+    {
+      "id": 149,
+      "hanzi": "水果",
+      "pinyin": "shuǐ guǒ",
+      "translation": "Fruit",
+      "enabled": true
+    },
+    {
+      "id": 150,
+      "hanzi": "店",
+      "pinyin": "diàn",
+      "translation": "STORES",
+      "enabled": true
+    },
+    {
+      "id": 151,
+      "hanzi": "水",
+      "pinyin": "shuǐ",
+      "translation": "H<g id=\"Subscript\">2</g>O",
+      "enabled": true
+    },
+    {
+      "id": 152,
+      "hanzi": "果",
+      "pinyin": "guǒ",
+      "translation": "",
+      "enabled": true
+    },
+    {
+      "id": 153,
+      "hanzi": "医院",
+      "pinyin": "yī yuàn",
+      "translation": "<g id=\"Bold\">Hospital:</g>",
+      "enabled": true
+    },
+    {
+      "id": 154,
+      "hanzi": "学校",
+      "pinyin": "xué xiào",
+      "translation": "School:",
+      "enabled": true
+    },
+    {
+      "id": 155,
+      "hanzi": "银行",
+      "pinyin": "yín háng",
+      "translation": "Banks",
+      "enabled": true
+    },
+    {
+      "id": 156,
+      "hanzi": "公司",
+      "pinyin": "gōng sī",
+      "translation": "Companies",
+      "enabled": true
+    },
+    {
+      "id": 157,
+      "hanzi": "才",
+      "pinyin": "cái",
+      "translation": "Talents",
+      "enabled": true
+    },
+    {
+      "id": 158,
+      "hanzi": "起床",
+      "pinyin": "qǐ chuáng",
+      "translation": "get up",
+      "enabled": true
+    },
+    {
+      "id": 159,
+      "hanzi": "真的吗",
+      "pinyin": "zhēn de ma",
+      "translation": "Really",
+      "enabled": true
+    },
+    {
+      "id": 160,
+      "hanzi": "太幸运了",
+      "pinyin": "tài xìng yùn le",
+      "translation": "That's lucky.",
+      "enabled": true
+    },
+    {
+      "id": 161,
+      "hanzi": "你呢",
+      "pinyin": "nǐ ne",
+      "translation": "How about you",
+      "enabled": true
+    },
+    {
+      "id": 162,
+      "hanzi": "也",
+      "pinyin": "yě",
+      "translation": "Also",
+      "enabled": true
+    },
+    {
+      "id": 163,
+      "hanzi": "所以",
+      "pinyin": "suǒ yǐ",
+      "translation": "So",
+      "enabled": true
+    },
+    {
+      "id": 164,
+      "hanzi": "真",
+      "pinyin": "zhēn",
+      "translation": "true",
+      "enabled": true
+    },
+    {
+      "id": 165,
+      "hanzi": "搬家",
+      "pinyin": "bān jiā",
+      "translation": "moving house",
+      "enabled": true
+    },
+    {
+      "id": 166,
+      "hanzi": "早上",
+      "pinyin": "zǎo shàng",
+      "translation": "MORNING",
+      "enabled": true
+    },
+    {
+      "id": 167,
+      "hanzi": "可爱",
+      "pinyin": "kě ài",
+      "translation": "Cuteness",
+      "enabled": true
+    },
+    {
+      "id": 168,
+      "hanzi": "喂狗吃早饭",
+      "pinyin": "wèi gǒu chī zǎo fàn",
+      "translation": "Feed the dog for breakfast",
+      "enabled": true
+    },
+    {
+      "id": 169,
+      "hanzi": "出门",
+      "pinyin": "chū mén",
+      "translation": "Emerging",
+      "enabled": true
+    },
+    {
+      "id": 170,
+      "hanzi": "短袖",
+      "pinyin": "duǎn xiù",
+      "translation": "Short sleeves",
+      "enabled": true
+    },
+    {
+      "id": 171,
+      "hanzi": "垃圾",
+      "pinyin": "lā jī",
+      "translation": "Garbage ",
+      "enabled": true
+    },
+    {
+      "id": 172,
+      "hanzi": "扔",
+      "pinyin": "rēng",
+      "translation": "Throw",
+      "enabled": true
+    },
+    {
+      "id": 173,
+      "hanzi": "切",
+      "pinyin": "qiè",
+      "translation": "Huge",
+      "enabled": true
+    },
+    {
+      "id": 174,
+      "hanzi": "牛肉",
+      "pinyin": "niú ròu",
+      "translation": "Beef",
+      "enabled": true
+    },
+    {
+      "id": 175,
+      "hanzi": "打扫",
+      "pinyin": "dǎ sǎo",
+      "translation": "clean",
+      "enabled": true
+    },
+    {
+      "id": 176,
+      "hanzi": "卫生",
+      "pinyin": "wèi shēng",
+      "translation": "health",
+      "enabled": true
+    },
+    {
+      "id": 177,
+      "hanzi": "打扫卫生",
+      "pinyin": "dǎ sǎo wèi shēng",
+      "translation": "Clean up",
+      "enabled": true
+    },
+    {
+      "id": 178,
+      "hanzi": "凌晨",
+      "pinyin": "líng chén",
+      "translation": "Tengah Malam",
+      "enabled": true
+    },
+    {
+      "id": 179,
+      "hanzi": "肉店老板",
+      "pinyin": "ròu diàn lǎo bǎn",
+      "translation": "Butcher",
+      "enabled": true
+    },
+    {
+      "id": 180,
+      "hanzi": "一次",
+      "pinyin": "yī cì",
+      "translation": "Once,",
+      "enabled": true
+    },
+    {
+      "id": 181,
+      "hanzi": "属",
+      "pinyin": "shǔ",
+      "translation": "Genus",
+      "enabled": true
+    },
+    {
+      "id": 182,
+      "hanzi": "分",
+      "pinyin": "fēn",
+      "translation": "cent",
+      "enabled": true
+    },
+    {
+      "id": 183,
+      "hanzi": "时",
+      "pinyin": "shí",
+      "translation": "Jam",
+      "enabled": true
+    },
+    {
+      "id": 184,
+      "hanzi": "秒",
+      "pinyin": "miǎo",
+      "translation": "Detik",
+      "enabled": true
+    },
+    {
+      "id": 185,
+      "hanzi": "时分秒",
+      "pinyin": "shí fēn miǎo",
+      "translation": "Hours Minutes Seconds",
+      "enabled": true
+    },
+    {
+      "id": 186,
+      "hanzi": "喂狗",
+      "pinyin": "wèi gǒu",
+      "translation": "feed the dog",
+      "enabled": true
+    },
+    {
+      "id": 187,
+      "hanzi": "几乎",
+      "pinyin": "jī hū",
+      "translation": "Almost",
+      "enabled": true
+    },
+    {
+      "id": 188,
+      "hanzi": "每天",
+      "pinyin": "měi tiān",
+      "translation": "Every day",
+      "enabled": true
+    },
+    {
+      "id": 189,
+      "hanzi": "都",
+      "pinyin": "dōu",
+      "translation": "Miyako",
+      "enabled": true
+    },
+    {
+      "id": 190,
+      "hanzi": "那",
+      "pinyin": "nà",
+      "translation": "So",
+      "enabled": true
+    },
+    {
+      "id": 191,
+      "hanzi": "因",
+      "pinyin": "yīn",
+      "translation": "Therefore, ",
+      "enabled": true
+    },
+    {
+      "id": 192,
+      "hanzi": "以后",
+      "pinyin": "yǐ hòu",
+      "translation": "Later",
+      "enabled": true
+    },
+    {
+      "id": 193,
+      "hanzi": "跑步",
+      "pinyin": "pǎo bù",
+      "translation": "Running",
+      "enabled": true
+    },
+    {
+      "id": 194,
+      "hanzi": "上班",
+      "pinyin": "shàng bān",
+      "translation": "START",
+      "enabled": true
+    },
+    {
+      "id": 195,
+      "hanzi": "从周一到周四",
+      "pinyin": "cóng zhōu yī dào zhōu sì",
+      "translation": "Monday to Thursday",
+      "enabled": true
+    },
+    {
+      "id": 196,
+      "hanzi": "周",
+      "pinyin": "zhōu",
+      "translation": "Week",
+      "enabled": true
+    },
+    {
+      "id": 197,
+      "hanzi": "般来",
+      "pinyin": "bān lái",
+      "translation": "Prai Lai",
+      "enabled": true
+    },
+    {
+      "id": 198,
+      "hanzi": "说",
+      "pinyin": "shuō",
+      "translation": "said",
+      "enabled": true
+    },
+    {
+      "id": 199,
+      "hanzi": "从",
+      "pinyin": "cóng",
+      "translation": "FROM",
+      "enabled": true
+    },
+    {
+      "id": 200,
+      "hanzi": "到",
+      "pinyin": "dào",
+      "translation": "to",
+      "enabled": true
+    },
+    {
+      "id": 201,
+      "hanzi": "奶茶",
+      "pinyin": "nǎi chá",
+      "translation": "Milk Tea",
+      "enabled": true
+    },
+    {
+      "id": 202,
+      "hanzi": "珍珠奶茶",
+      "pinyin": "zhēn zhū nǎi chá",
+      "translation": "Pearl Milk Tea",
+      "enabled": true
+    },
+    {
+      "id": 203,
+      "hanzi": "橙汁",
+      "pinyin": "chéng zhī",
+      "translation": "Orange",
+      "enabled": true
+    },
+    {
+      "id": 204,
+      "hanzi": "游泳",
+      "pinyin": "yóu yǒng",
+      "translation": "Swimming",
+      "enabled": true
+    },
+    {
+      "id": 205,
+      "hanzi": "自由",
+      "pinyin": "zì yóu",
+      "translation": "FREE",
+      "enabled": true
+    },
+    {
+      "id": 206,
+      "hanzi": "零",
+      "pinyin": "líng",
+      "translation": "NIL",
+      "enabled": true
+    },
+    {
+      "id": 207,
+      "hanzi": "半",
+      "pinyin": "bàn",
+      "translation": "PCR",
+      "enabled": true
+    },
+    {
+      "id": 208,
+      "hanzi": "现在",
+      "pinyin": "xiàn zài",
+      "translation": "Now",
+      "enabled": true
+    },
+    {
+      "id": 209,
+      "hanzi": "回家",
+      "pinyin": "huí jiā",
+      "translation": "Going home",
+      "enabled": true
+    },
+    {
+      "id": 210,
+      "hanzi": "睡觉",
+      "pinyin": "shuì jiào",
+      "translation": "Sleep",
+      "enabled": true
+    },
+    {
+      "id": 211,
+      "hanzi": "拿来",
+      "pinyin": "ná lái",
+      "translation": "Give it here.",
+      "enabled": true
+    },
+    {
+      "id": 212,
+      "hanzi": "带走",
+      "pinyin": "dài zǒu",
+      "translation": "carry away",
+      "enabled": true
+    },
+    {
+      "id": 213,
+      "hanzi": "请慢用",
+      "pinyin": "qǐng màn yòng",
+      "translation": "Enjoy your meal",
+      "enabled": true
+    },
+    {
+      "id": 214,
+      "hanzi": "服务",
+      "pinyin": "fú wù",
+      "translation": "SERVICES",
+      "enabled": true
+    },
+    {
+      "id": 215,
+      "hanzi": "食物",
+      "pinyin": "shí wù",
+      "translation": "grain",
+      "enabled": true
+    },
+    {
+      "id": 216,
+      "hanzi": "看上去很好吃",
+      "pinyin": "kàn shàng qù hěn hǎo chī",
+      "translation": "Looks tasty.",
+      "enabled": true
+    },
+    {
+      "id": 217,
+      "hanzi": "账单",
+      "pinyin": "zhàng dān",
+      "translation": "the check}",
+      "enabled": true
+    },
+    {
+      "id": 218,
+      "hanzi": "盐",
+      "pinyin": "yán",
+      "translation": "Salt",
+      "enabled": true
+    },
+    {
+      "id": 219,
+      "hanzi": "咸",
+      "pinyin": "xián",
+      "translation": "Taste",
+      "enabled": true
+    },
+    {
+      "id": 220,
+      "hanzi": "请再",
+      "pinyin": "qǐng zài",
+      "translation": "Again, please.",
+      "enabled": true
+    },
+    {
+      "id": 221,
+      "hanzi": "给我一个",
+      "pinyin": "gěi wǒ yí gè",
+      "translation": "Give me one",
+      "enabled": true
+    },
+    {
+      "id": 222,
+      "hanzi": "一瓶",
+      "pinyin": "yī píng",
+      "translation": "a bottle",
+      "enabled": true
+    },
+    {
+      "id": 223,
+      "hanzi": "名字",
+      "pinyin": "míng zì",
+      "translation": "First Name",
+      "enabled": true
+    },
+    {
+      "id": 224,
+      "hanzi": "叫",
+      "pinyin": "jiào",
+      "translation": "|",
+      "enabled": true
+    },
+    {
+      "id": 225,
+      "hanzi": "多大了",
+      "pinyin": "duō dà le",
+      "translation": "How old are you?",
+      "enabled": true
+    },
+    {
+      "id": 226,
+      "hanzi": "草莓",
+      "pinyin": "cǎo méi",
+      "translation": "Garden strawberry",
+      "enabled": true
+    },
+    {
+      "id": 227,
+      "hanzi": "更喜欢",
+      "pinyin": "gèng xǐ huān",
+      "translation": "people prefer",
+      "enabled": true
+    },
+    {
+      "id": 228,
+      "hanzi": "还是",
+      "pinyin": "hái shì",
+      "translation": "or/is still",
+      "enabled": true
+    },
+    {
+      "id": 229,
+      "hanzi": "没有",
+      "pinyin": "méi yǒu",
+      "translation": "No",
+      "enabled": true
+    },
+    {
+      "id": 230,
+      "hanzi": "啤酒",
+      "pinyin": "pí jiǔ",
+      "translation": "Beers",
+      "enabled": true
+    },
+    {
+      "id": 231,
+      "hanzi": "男朋友",
+      "pinyin": "nán péng yǒu",
+      "translation": "Boyfriend",
+      "enabled": true
+    },
+    {
+      "id": 232,
+      "hanzi": "男",
+      "pinyin": "nán",
+      "translation": "men",
+      "enabled": true
+    },
+    {
+      "id": 233,
+      "hanzi": "白酒",
+      "pinyin": "bái jiǔ",
+      "translation": "Liquor",
+      "enabled": true
+    },
+    {
+      "id": 234,
+      "hanzi": "女朋友",
+      "pinyin": "nǚ péng yǒu",
+      "translation": "Girlfriend",
+      "enabled": true
+    },
+    {
+      "id": 235,
+      "hanzi": "面馆",
+      "pinyin": "miàn guǎn",
+      "translation": "Noodle shop",
+      "enabled": true
+    },
+    {
+      "id": 236,
+      "hanzi": "服务员",
+      "pinyin": "fú wù yuán",
+      "translation": "customer service personnel",
+      "enabled": true
+    },
+    {
+      "id": 237,
+      "hanzi": "您需要什么",
+      "pinyin": "nín xū yào shén me",
+      "translation": "WHAT YOU NEED",
+      "enabled": true
+    },
+    {
+      "id": 238,
+      "hanzi": "您",
+      "pinyin": "nín",
+      "translation": "Kamu",
+      "enabled": true
+    },
+    {
+      "id": 239,
+      "hanzi": "太贵了",
+      "pinyin": "tài guì le",
+      "translation": "too expensive",
+      "enabled": true
+    },
+    {
+      "id": 240,
+      "hanzi": "太多了",
+      "pinyin": "tài duō le",
+      "translation": "too many",
+      "enabled": true
+    },
+    {
+      "id": 241,
+      "hanzi": "宫保鸡丁",
+      "pinyin": "gōng bǎo jī dīng",
+      "translation": "Kung Pao chicken",
+      "enabled": true
+    },
+    {
+      "id": 242,
+      "hanzi": "番茄炒蛋",
+      "pinyin": "fān qié chǎo dàn",
+      "translation": "Tomato Scrambled Eggs",
+      "enabled": true
+    },
+    {
+      "id": 243,
+      "hanzi": "麻婆豆腐",
+      "pinyin": "má pó dòu fǔ",
+      "translation": "Mapo doufu",
+      "enabled": true
+    },
+    {
+      "id": 244,
+      "hanzi": "汉堡",
+      "pinyin": "hàn bǎo",
+      "translation": "Hamburg",
+      "enabled": true
+    },
+    {
+      "id": 245,
+      "hanzi": "披萨",
+      "pinyin": "pī sà",
+      "translation": "Pizza",
+      "enabled": true
+    },
+    {
+      "id": 246,
+      "hanzi": "薯片",
+      "pinyin": "shǔ piàn",
+      "translation": "potato chips",
+      "enabled": true
+    },
+    {
+      "id": 247,
+      "hanzi": "饼干",
+      "pinyin": "bǐng gān",
+      "translation": "Cookie",
+      "enabled": true
+    },
+    {
+      "id": 248,
+      "hanzi": "酸奶",
+      "pinyin": "suān nǎi",
+      "translation": "Yoghurt",
+      "enabled": true
+    },
+    {
+      "id": 249,
+      "hanzi": "巧克力",
+      "pinyin": "qiǎo kè lì",
+      "translation": "Chocolate ",
+      "enabled": true
+    },
+    {
+      "id": 250,
+      "hanzi": "薯条",
+      "pinyin": "shǔ tiáo",
+      "translation": "French fries",
+      "enabled": true
+    },
+    {
+      "id": 251,
+      "hanzi": "杯",
+      "pinyin": "bēi",
+      "translation": "Cup",
+      "enabled": true
+    },
+    {
+      "id": 252,
+      "hanzi": "瓶",
+      "pinyin": "píng",
+      "translation": "bottle",
+      "enabled": true
+    },
+    {
+      "id": 253,
+      "hanzi": "袋",
+      "pinyin": "dài",
+      "translation": "bag",
+      "enabled": true
+    },
+    {
+      "id": 254,
+      "hanzi": "斤",
+      "pinyin": "jīn",
+      "translation": "Catty",
+      "enabled": true
+    },
+    {
+      "id": 255,
+      "hanzi": "盒",
+      "pinyin": "hé",
+      "translation": "box",
+      "enabled": true
+    },
+    {
+      "id": 256,
+      "hanzi": "碗",
+      "pinyin": "wǎn",
+      "translation": "Bowl",
+      "enabled": true
+    },
+    {
+      "id": 257,
+      "hanzi": "作业",
+      "pinyin": "zuò yè",
+      "translation": "Operations",
+      "enabled": true
+    },
+    {
+      "id": 258,
+      "hanzi": "谁",
+      "pinyin": "shuí",
+      "translation": "Who",
+      "enabled": true
+    },
+    {
+      "id": 259,
+      "hanzi": "国",
+      "pinyin": "guó",
+      "translation": "Country",
+      "enabled": true
+    },
+    {
+      "id": 260,
+      "hanzi": "生日快乐",
+      "pinyin": "shēng rì kuài lè",
+      "translation": "Happy Birth Day",
+      "enabled": true
+    },
+    {
+      "id": 261,
+      "hanzi": "生日蛋糕",
+      "pinyin": "shēng rì dàn gāo",
+      "translation": "Birthday cake",
+      "enabled": true
+    },
+    {
+      "id": 262,
+      "hanzi": "中国国旗",
+      "pinyin": "zhōng guó guó qí",
+      "translation": "China Flag",
+      "enabled": true
+    },
+    {
+      "id": 263,
+      "hanzi": "五星红旗",
+      "pinyin": "wǔ xīng hóng qí",
+      "translation": "the Five-Starred Red Flag",
+      "enabled": true
+    },
+    {
+      "id": 264,
+      "hanzi": "国歌",
+      "pinyin": "guó gē",
+      "translation": "national anthem",
+      "enabled": true
+    },
+    {
+      "id": 265,
+      "hanzi": "唱国歌",
+      "pinyin": "chàng guó gē",
+      "translation": "Sing the national anthem",
+      "enabled": true
+    },
+    {
+      "id": 266,
+      "hanzi": "国花",
+      "pinyin": "guó huā",
+      "translation": "National Flower",
+      "enabled": true
+    },
+    {
+      "id": 267,
+      "hanzi": "几天",
+      "pinyin": "jǐ tiān",
+      "translation": "several days",
+      "enabled": true
+    },
+    {
+      "id": 268,
+      "hanzi": "中国人",
+      "pinyin": "zhōng guó rén",
+      "translation": "Company",
+      "enabled": true
+    },
+    {
+      "id": 269,
+      "hanzi": "做什么",
+      "pinyin": "zuò shén me",
+      "translation": "WHAT TO DO",
+      "enabled": true
+    },
+    {
+      "id": 270,
+      "hanzi": "旅游",
+      "pinyin": "lǚ yóu",
+      "translation": "Tourism",
+      "enabled": true
+    },
+    {
+      "id": 271,
+      "hanzi": "国庆节",
+      "pinyin": "guó qìng jié",
+      "translation": "National Day",
+      "enabled": true
+    },
+    {
+      "id": 272,
+      "hanzi": "船",
+      "pinyin": "chuán",
+      "translation": "Ship",
+      "enabled": true
+    },
+    {
+      "id": 273,
+      "hanzi": "飞机",
+      "pinyin": "fēi jī",
+      "translation": "Plane:",
+      "enabled": true
+    },
+    {
+      "id": 274,
+      "hanzi": "火车",
+      "pinyin": "huǒ chē",
+      "translation": "Train",
+      "enabled": true
+    },
+    {
+      "id": 275,
+      "hanzi": "奶奶",
+      "pinyin": "nǎi nǎi",
+      "translation": "Grandma",
+      "enabled": true
+    },
+    {
+      "id": 276,
+      "hanzi": "爷爷",
+      "pinyin": "yé yé",
+      "translation": "Grandpa",
+      "enabled": true
+    },
+    {
+      "id": 277,
+      "hanzi": "老公",
+      "pinyin": "lǎo gōng",
+      "translation": "Husband",
+      "enabled": true
+    },
+    {
+      "id": 278,
+      "hanzi": "儿子",
+      "pinyin": "ér zi",
+      "translation": "Son",
+      "enabled": true
+    },
+    {
+      "id": 279,
+      "hanzi": "他们",
+      "pinyin": "tā men",
+      "translation": "They",
+      "enabled": true
+    },
+    {
+      "id": 280,
+      "hanzi": "家人",
+      "pinyin": "jiā rén",
+      "translation": "With family",
+      "enabled": true
+    },
+    {
+      "id": 281,
+      "hanzi": "干杯",
+      "pinyin": "gān bēi",
+      "translation": "Cheers.",
+      "enabled": true
+    },
+    {
+      "id": 282,
+      "hanzi": "看书",
+      "pinyin": "kàn shū",
+      "translation": "Reading",
+      "enabled": true
+    },
+    {
+      "id": 283,
+      "hanzi": "书",
+      "pinyin": "shū",
+      "translation": "B",
+      "enabled": true
+    },
+    {
+      "id": 284,
+      "hanzi": "她在家",
+      "pinyin": "tā zài jiā",
+      "translation": "She's at home.",
+      "enabled": true
+    },
+    {
+      "id": 285,
+      "hanzi": "我在健身房做瑜伽",
+      "pinyin": "wǒ zài jiàn shēn fáng zuò yú jiā",
+      "translation": "I do yoga in the gym",
+      "enabled": true
+    },
+    {
+      "id": 286,
+      "hanzi": "健身房",
+      "pinyin": "jiàn shēn fáng",
+      "translation": "Gym",
+      "enabled": true
+    },
+    {
+      "id": 287,
+      "hanzi": "瑜伽",
+      "pinyin": "yú jiā",
+      "translation": "Yoga",
+      "enabled": true
+    },
+    {
+      "id": 288,
+      "hanzi": "打牌",
+      "pinyin": "dǎ pái",
+      "translation": "Play poker",
+      "enabled": true
+    },
+    {
+      "id": 289,
+      "hanzi": "放假",
+      "pinyin": "fàng jià",
+      "translation": "Break",
+      "enabled": true
+    },
+    {
+      "id": 290,
+      "hanzi": "恐怖片",
+      "pinyin": "kǒng bù piàn",
+      "translation": "Horror film",
+      "enabled": true
+    },
+    {
+      "id": 291,
+      "hanzi": "睡美容",
+      "pinyin": "shuì měi róng",
+      "translation": "Sleep Beauty",
+      "enabled": true
+    },
+    {
+      "id": 292,
+      "hanzi": "骑车",
+      "pinyin": "qí chē",
+      "translation": "Cycle",
+      "enabled": true
+    },
+    {
+      "id": 293,
+      "hanzi": "打篮球",
+      "pinyin": "dǎ lán qiú",
+      "translation": "play basketball",
+      "enabled": true
+    },
+    {
+      "id": 294,
+      "hanzi": "打电话",
+      "pinyin": "dǎ diàn huà",
+      "translation": "Telephone",
+      "enabled": true
+    },
+    {
+      "id": 295,
+      "hanzi": "一周一次",
+      "pinyin": "yī zhōu yī cì",
+      "translation": "<g id=\"Bold\">Qw,</g>",
+      "enabled": true
+    },
+    {
+      "id": 296,
+      "hanzi": "足球",
+      "pinyin": "zú qiú",
+      "translation": "Football",
+      "enabled": true
+    },
+    {
+      "id": 297,
+      "hanzi": "电影院",
+      "pinyin": "diàn yǐng yuàn",
+      "translation": "Cinemas",
+      "enabled": true
+    },
+    {
+      "id": 298,
+      "hanzi": "电影",
+      "pinyin": "diàn yǐng",
+      "translation": "Motion Picture",
+      "enabled": true
+    },
+    {
+      "id": 299,
+      "hanzi": "打游戏",
+      "pinyin": "dǎ yóu xì",
+      "translation": "to play games",
+      "enabled": true
+    },
+    {
+      "id": 300,
+      "hanzi": "面包",
+      "pinyin": "miàn bāo",
+      "translation": "Bread",
+      "enabled": true
+    },
+    {
+      "id": 301,
+      "hanzi": "偶尔",
+      "pinyin": "ǒu ěr",
+      "translation": "A little of the time",
+      "enabled": true
+    },
+    {
+      "id": 302,
+      "hanzi": "但是",
+      "pinyin": "dàn shì",
+      "translation": "But...",
+      "enabled": true
+    },
+    {
+      "id": 303,
+      "hanzi": "没那么喜欢",
+      "pinyin": "méi nà me xǐ huān",
+      "translation": "I don't like it that much",
+      "enabled": true
+    },
+    {
+      "id": 304,
+      "hanzi": "都喜欢",
+      "pinyin": "dōu xǐ huān",
+      "translation": "I liked all of it",
+      "enabled": true
+    },
+    {
+      "id": 305,
+      "hanzi": "十八",
+      "pinyin": "shí bā",
+      "translation": "18",
+      "enabled": true
+    },
+    {
+      "id": 306,
+      "hanzi": "八十",
+      "pinyin": "bā shí",
+      "translation": "80",
+      "enabled": true
+    },
+    {
+      "id": 307,
+      "hanzi": "元",
+      "pinyin": "yuán",
+      "translation": "$",
+      "enabled": true
+    },
+    {
+      "id": 308,
+      "hanzi": "块",
+      "pinyin": "kuài",
+      "translation": "Set(s)",
+      "enabled": true
+    },
+    {
+      "id": 309,
+      "hanzi": "角",
+      "pinyin": "jiǎo",
+      "translation": "Cape",
+      "enabled": true
+    },
+    {
+      "id": 310,
+      "hanzi": "毛",
+      "pinyin": "máo",
+      "translation": "Wool",
+      "enabled": true
+    },
+    {
+      "id": 311,
+      "hanzi": "百",
+      "pinyin": "bǎi",
+      "translation": "Hundreds",
+      "enabled": true
+    },
+    {
+      "id": 312,
+      "hanzi": "一边",
+      "pinyin": "yī biān",
+      "translation": "one side",
+      "enabled": true
+    },
+    {
+      "id": 313,
+      "hanzi": "厨房",
+      "pinyin": "chú fáng",
+      "translation": "Kitchens",
+      "enabled": true
+    },
+    {
+      "id": 314,
+      "hanzi": "听",
+      "pinyin": "tīng",
+      "translation": "LISTEN",
+      "enabled": true
+    },
+    {
+      "id": 315,
+      "hanzi": "音乐",
+      "pinyin": "yīn yuè",
+      "translation": "Music",
+      "enabled": true
+    },
+    {
+      "id": 316,
+      "hanzi": "快乐",
+      "pinyin": "kuài lè",
+      "translation": "Happy",
+      "enabled": true
+    },
+    {
+      "id": 317,
+      "hanzi": "听播客",
+      "pinyin": "tīng bō kè",
+      "translation": "Listen to the podcast",
+      "enabled": true
+    },
+    {
+      "id": 318,
+      "hanzi": "猜猜",
+      "pinyin": "cāi cāi",
+      "translation": "Guess",
+      "enabled": true
+    },
+    {
+      "id": 319,
+      "hanzi": "弹钢琴",
+      "pinyin": "tán gāng qín",
+      "translation": "playing the piano",
+      "enabled": true
+    },
+    {
+      "id": 320,
+      "hanzi": "烧烤",
+      "pinyin": "shāo kǎo",
+      "translation": "ON THE GRILL",
+      "enabled": true
+    },
+    {
+      "id": 321,
+      "hanzi": "烤串",
+      "pinyin": "kǎo chuàn",
+      "translation": "grilled skewer(s)",
+      "enabled": true
+    },
+    {
+      "id": 322,
+      "hanzi": "特别",
+      "pinyin": "tè bié",
+      "translation": "Special",
+      "enabled": true
+    },
+    {
+      "id": 323,
+      "hanzi": "天",
+      "pinyin": "tiān",
+      "translation": " days",
+      "enabled": true
+    },
+    {
+      "id": 324,
+      "hanzi": "日",
+      "pinyin": "rì",
+      "translation": "Harian",
+      "enabled": true
+    },
+    {
+      "id": 325,
+      "hanzi": "学生",
+      "pinyin": "xué shēng",
+      "translation": "Student",
+      "enabled": true
+    },
+    {
+      "id": 326,
+      "hanzi": "有的",
+      "pinyin": "yǒu de",
+      "translation": "there are",
+      "enabled": true
+    },
+    {
+      "id": 327,
+      "hanzi": "图书馆",
+      "pinyin": "tú shū guǎn",
+      "translation": "library",
+      "enabled": true
+    },
+    {
+      "id": 328,
+      "hanzi": "里",
+      "pinyin": "lǐ",
+      "translation": "mile",
+      "enabled": true
+    },
+    {
+      "id": 329,
+      "hanzi": "着看书",
+      "pinyin": "zhe kàn shū",
+      "translation": "Reading a book",
+      "enabled": true
+    },
+    {
+      "id": 330,
+      "hanzi": "多人",
+      "pinyin": "duō rén",
+      "translation": "many people",
+      "enabled": true
+    },
+    {
+      "id": 331,
+      "hanzi": "散步",
+      "pinyin": "sàn bù",
+      "translation": "Walking",
+      "enabled": true
+    },
+    {
+      "id": 332,
+      "hanzi": "遛狗",
+      "pinyin": "liú gǒu",
+      "translation": "Walk the Dog",
+      "enabled": true
+    },
+    {
+      "id": 333,
+      "hanzi": "还有的",
+      "pinyin": "hái yǒu de",
+      "translation": "There's more.",
+      "enabled": true
+    },
+    {
+      "id": 334,
+      "hanzi": "拍照",
+      "pinyin": "pāi zhào",
+      "translation": "Take Photo",
+      "enabled": true
+    },
+    {
+      "id": 335,
+      "hanzi": "听音乐",
+      "pinyin": "tīng yīn yuè",
+      "translation": "listen to music",
+      "enabled": true
+    },
+    {
+      "id": 336,
+      "hanzi": "电脑",
+      "pinyin": "diàn nǎo",
+      "translation": "PC",
+      "enabled": true
+    },
+    {
+      "id": 337,
+      "hanzi": "用",
+      "pinyin": "yòng",
+      "translation": "",
+      "enabled": true
+    },
+    {
+      "id": 338,
+      "hanzi": "用电脑",
+      "pinyin": "yòng diàn nǎo",
+      "translation": "On a computer",
+      "enabled": true
+    },
+    {
+      "id": 339,
+      "hanzi": "奥特莱斯",
+      "pinyin": "ào tè lái sī",
+      "translation": "Outlet",
+      "enabled": true
+    },
+    {
+      "id": 340,
+      "hanzi": "卖",
+      "pinyin": "mài",
+      "translation": "Sold",
+      "enabled": true
+    },
+    {
+      "id": 341,
+      "hanzi": "买",
+      "pinyin": "mǎi",
+      "translation": "Buying",
+      "enabled": true
+    },
+    {
+      "id": 342,
+      "hanzi": "过",
+      "pinyin": "guò",
+      "translation": "anything.",
+      "enabled": true
+    },
+    {
+      "id": 343,
+      "hanzi": "看热闹",
+      "pinyin": "kàn rè nào",
+      "translation": "enjoy watching a bustling scene",
+      "enabled": true
+    },
+    {
+      "id": 344,
+      "hanzi": "今天",
+      "pinyin": "jīn tiān",
+      "translation": "Today",
+      "enabled": true
+    },
+    {
+      "id": 345,
+      "hanzi": "星期天",
+      "pinyin": "xīng qī tiān",
+      "translation": "Sunday",
+      "enabled": true
+    },
+    {
+      "id": 346,
+      "hanzi": "一起",
+      "pinyin": "yì qǐ",
+      "translation": "Combined",
+      "enabled": true
+    },
+    {
+      "id": 347,
+      "hanzi": "很大",
+      "pinyin": "hěn dà",
+      "translation": "very big",
+      "enabled": true
+    },
+    {
+      "id": 348,
+      "hanzi": "里面",
+      "pinyin": "lǐ miàn",
+      "translation": "inside",
+      "enabled": true
+    },
+    {
+      "id": 349,
+      "hanzi": "桌子",
+      "pinyin": "zhuō zi",
+      "translation": "Tables",
+      "enabled": true
+    },
+    {
+      "id": 350,
+      "hanzi": "旁边",
+      "pinyin": "páng biān",
+      "translation": "By sides",
+      "enabled": true
+    },
+    {
+      "id": 351,
+      "hanzi": "找资料",
+      "pinyin": "zhǎo zī liào",
+      "translation": "Find information",
+      "enabled": true
+    },
+    {
+      "id": 352,
+      "hanzi": "大家都很认真",
+      "pinyin": "dà jiā dōu hěn rèn zhēn",
+      "translation": "Everybody's serious.",
+      "enabled": true
+    },
+    {
+      "id": 353,
+      "hanzi": "历史",
+      "pinyin": "lì shǐ",
+      "translation": "HISTORY",
+      "enabled": true
+    },
+    {
+      "id": 354,
+      "hanzi": "意思",
+      "pinyin": "yì si",
+      "translation": "opinion",
+      "enabled": true
+    },
+    {
+      "id": 355,
+      "hanzi": "后来",
+      "pinyin": "hòu lái",
+      "translation": "Later on",
+      "enabled": true
+    },
+    {
+      "id": 356,
+      "hanzi": "找到",
+      "pinyin": "zhǎo dào",
+      "translation": "Found ",
+      "enabled": true
+    },
+    {
+      "id": 357,
+      "hanzi": "安静",
+      "pinyin": "ān jìng",
+      "translation": "Quiet",
+      "enabled": true
+    },
+    {
+      "id": 358,
+      "hanzi": "地方",
+      "pinyin": "dì fāng",
+      "translation": "Local",
+      "enabled": true
+    },
+    {
+      "id": 359,
+      "hanzi": "中文",
+      "pinyin": "zhōng wén",
+      "translation": "English",
+      "enabled": true
+    },
+    {
+      "id": 360,
+      "hanzi": "笔记",
+      "pinyin": "bǐ jì",
+      "translation": "Notes",
+      "enabled": true
+    },
+    {
+      "id": 361,
+      "hanzi": "写",
+      "pinyin": "xiě",
+      "translation": "Writing",
+      "enabled": true
+    },
+    {
+      "id": 362,
+      "hanzi": "作文",
+      "pinyin": "zuò wén",
+      "translation": "Essay",
+      "enabled": true
+    },
+    {
+      "id": 363,
+      "hanzi": "哥哥",
+      "pinyin": "gē gē",
+      "translation": "Elder Brother",
+      "enabled": true
+    },
+    {
+      "id": 364,
+      "hanzi": "弟弟",
+      "pinyin": "dì di",
+      "translation": "Hermano",
+      "enabled": true
+    },
+    {
+      "id": 365,
+      "hanzi": "可乐",
+      "pinyin": "kě lè",
+      "translation": "Cola",
+      "enabled": true
+    },
+    {
+      "id": 366,
+      "hanzi": "你有问题吗",
+      "pinyin": "nǐ yǒu wèn tí ma",
+      "translation": "Do you have questions?",
+      "enabled": true
+    },
+    {
+      "id": 367,
+      "hanzi": "昨天",
+      "pinyin": "zuó tiān",
+      "translation": "YESTERDAY",
+      "enabled": true
+    },
+    {
+      "id": 368,
+      "hanzi": "阅读",
+      "pinyin": "yuè dú",
+      "translation": "min read",
+      "enabled": true
+    },
+    {
+      "id": 369,
+      "hanzi": "读书",
+      "pinyin": "dú shū",
+      "translation": "Reading books",
+      "enabled": true
+    },
+    {
+      "id": 370,
+      "hanzi": "年",
+      "pinyin": "nián",
+      "translation": "years",
+      "enabled": true
+    },
+    {
+      "id": 371,
+      "hanzi": "安",
+      "pinyin": "ān",
+      "translation": "",
+      "enabled": true
+    },
+    {
+      "id": 372,
+      "hanzi": "五",
+      "pinyin": "wǔ",
+      "translation": "The Fifth Semester",
+      "enabled": true
+    },
+    {
+      "id": 373,
+      "hanzi": "妈妈",
+      "pinyin": "mā mā",
+      "translation": "Mom!",
+      "enabled": true
+    },
+    {
+      "id": 374,
+      "hanzi": "⻢",
+      "pinyin": "",
+      "translation": "",
+      "enabled": true
+    },
+    {
+      "id": 375,
+      "hanzi": "爸爸",
+      "pinyin": "bà bà",
+      "translation": "Dangal",
+      "enabled": true
+    },
+    {
+      "id": 376,
+      "hanzi": "伯伯",
+      "pinyin": "bó bo",
+      "translation": "Uncle",
+      "enabled": true
+    },
+    {
+      "id": 377,
+      "hanzi": "上课",
+      "pinyin": "shàng kè",
+      "translation": "Class start date",
+      "enabled": true
+    },
+    {
+      "id": 378,
+      "hanzi": "鹅",
+      "pinyin": "é",
+      "translation": "Domestic goose",
+      "enabled": true
+    },
+    {
+      "id": 379,
+      "hanzi": "明年",
+      "pinyin": "míng nián",
+      "translation": "Next Year",
+      "enabled": true
+    },
+    {
+      "id": 380,
+      "hanzi": "先",
+      "pinyin": "xiān",
+      "translation": "Prior",
+      "enabled": true
+    },
+    {
+      "id": 381,
+      "hanzi": "然后",
+      "pinyin": "rán hòu",
+      "translation": "And then",
+      "enabled": true
+    },
+    {
+      "id": 382,
+      "hanzi": "早饭",
+      "pinyin": "zǎo fàn",
+      "translation": "Breakfast",
+      "enabled": true
+    },
+    {
+      "id": 383,
+      "hanzi": "午饭",
+      "pinyin": "wǔ fàn",
+      "translation": "midday meal",
+      "enabled": true
+    },
+    {
+      "id": 384,
+      "hanzi": "晚饭",
+      "pinyin": "wǎn fàn",
+      "translation": "\"Dinner?\"",
+      "enabled": true
+    },
+    {
+      "id": 385,
+      "hanzi": "医生",
+      "pinyin": "yī shēng",
+      "translation": "Doctors",
+      "enabled": true
+    },
+    {
+      "id": 386,
+      "hanzi": "西班牙",
+      "pinyin": "xī bān yá",
+      "translation": "Spanish",
+      "enabled": true
+    },
+    {
+      "id": 387,
+      "hanzi": "日本",
+      "pinyin": "rì běn",
+      "translation": "Japan",
+      "enabled": true
+    },
+    {
+      "id": 388,
+      "hanzi": "德国",
+      "pinyin": "dé guó",
+      "translation": "German",
+      "enabled": true
+    },
+    {
+      "id": 389,
+      "hanzi": "南非",
+      "pinyin": "nán fēi",
+      "translation": "South Africa",
       "enabled": true
     }
   ]
