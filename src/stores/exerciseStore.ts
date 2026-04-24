@@ -20,6 +20,7 @@ interface ExerciseState {
   // Actions
   startSession: (type: ExerciseType, words: Word[], difficulty: ExerciseDifficulty) => void;
   answerQuestion: (exerciseId: string, selectedOptionId: string) => { correct: boolean; correctAnswer: string };
+  nextQuestion: () => void;
   skipQuestion: () => void;
   endSession: () => void;
   resetStats: () => void;
@@ -88,9 +89,11 @@ function generateExercises(
           english: word.translation 
         };
         
-        // Generate 4 options including correct one
-        const options: ExerciseOption[] = shuffle(enabledWords)
-          .filter(w => w.id !== word.id)
+        // Filter distractors to have same hanzi length as correct answer
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+        const options: ExerciseOption[] = shuffle(sameLengthWords)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
         
@@ -105,14 +108,14 @@ function generateExercises(
       case 'hanzi-to-pinyin': {
         exercise.question = word.hanzi;
         exercise.questionData = { hanzi: word.hanzi };
-        
+
         const pinyinOptions = generatePinyinDistractors(word.pinyin, enabledWords);
         const options: ExerciseOption[] = pinyinOptions.map((p, i) => ({
-          id: `opt-${i}`,
+          id: `${exercise.id}-opt-${i}-${crypto.randomUUID()}`,
           text: p,
           isCorrect: p === word.pinyin
         }));
-        
+
         exercise.options = options;
         exercise.correctAnswer = options.find(o => o.isCorrect)?.id || '';
         break;
@@ -121,15 +124,18 @@ function generateExercises(
       case 'pinyin-to-hanzi': {
         exercise.question = word.pinyin;
         exercise.questionData = { pinyin: word.pinyin };
-        
-        const options: ExerciseOption[] = shuffle(enabledWords)
-          .filter(w => w.id !== word.id)
+
+        // Filter distractors to have same hanzi length as correct answer
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+        const options: ExerciseOption[] = shuffle(sameLengthWords)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.translation, isCorrect: false }));
-        
+
         const correctId = `opt-${word.id}`;
         options.push({ id: correctId, text: word.hanzi, subtext: word.translation, isCorrect: true });
-        
+
         exercise.options = shuffle(options);
         exercise.correctAnswer = correctId;
         break;
@@ -138,9 +144,12 @@ function generateExercises(
       case 'english-to-hanzi': {
         exercise.question = word.translation;
         exercise.questionData = { english: word.translation };
-        
-        const options: ExerciseOption[] = shuffle(enabledWords)
-          .filter(w => w.id !== word.id)
+
+        // Filter distractors to have same hanzi length as correct answer
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+        const options: ExerciseOption[] = shuffle(sameLengthWords)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
         
@@ -217,18 +226,18 @@ export const useExerciseStore = create<ExerciseState>()(
       answerQuestion: (_exerciseId, selectedOptionId) => {
         const state = get();
         const session = state.session;
-        
+
         if (!session) {
           return { correct: false, correctAnswer: '' };
         }
-        
+
         const currentExercise = session.queue[session.currentIndex];
         const isCorrect = selectedOptionId === currentExercise.correctAnswer;
-        
+
         // Update session
         const newStreak = isCorrect ? session.streak + 1 : 0;
         const newMaxStreak = Math.max(session.maxStreak, newStreak);
-        
+
         session.totalAnswered++;
         if (isCorrect) {
           session.correctAnswers++;
@@ -236,14 +245,24 @@ export const useExerciseStore = create<ExerciseState>()(
         }
         session.streak = newStreak;
         session.maxStreak = newMaxStreak;
-        session.currentIndex++;
-        
+        // Don't auto-advance - let user see result first
+
         set({ session });
-        
-        return { 
-          correct: isCorrect, 
-          correctAnswer: currentExercise.correctAnswer 
+
+        return {
+          correct: isCorrect,
+          correctAnswer: currentExercise.correctAnswer
         };
+      },
+
+      nextQuestion: () => {
+        const state = get();
+        const session = state.session;
+
+        if (!session) return;
+
+        session.currentIndex++;
+        set({ session });
       },
 
       skipQuestion: () => {

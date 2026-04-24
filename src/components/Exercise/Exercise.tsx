@@ -16,6 +16,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   const session = useExerciseStore(state => state.session);
   const startSession = useExerciseStore(state => state.startSession);
   const answerQuestion = useExerciseStore(state => state.answerQuestion);
+  const nextQuestion = useExerciseStore(state => state.nextQuestion);
   const skipQuestion = useExerciseStore(state => state.skipQuestion);
   const endSession = useExerciseStore(state => state.endSession);
   const getCurrentExercise = useExerciseStore(state => state.getCurrentExercise);
@@ -27,14 +28,21 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   const [isCorrect, setIsCorrect] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [autoContinue, setAutoContinue] = useState(() => {
+    const saved = localStorage.getItem('autoContinue');
+    return saved ? JSON.parse(saved) : true;
+  });
 
   // Start session on mount
   useEffect(() => {
     if (!session) {
       startSession(type, words, difficulty);
+    } else {
+      endSession();
+      startSession(type, words, difficulty);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [type]);
 
   // Check if session is complete
   useEffect(() => {
@@ -44,9 +52,32 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.currentIndex]);
 
+  // Reset state when exercise changes
+  useEffect(() => {
+    setSelectedOption(null);
+    setShowResult(false);
+    setIsCorrect(false);
+  }, [session?.currentIndex]);
+
+  // Save autoContinue preference
+  useEffect(() => {
+    localStorage.setItem('autoContinue', JSON.stringify(autoContinue));
+  }, [autoContinue]);
+
+  // Auto-continue when result is shown
+  useEffect(() => {
+    if (showResult && autoContinue) {
+      const timer = setTimeout(() => {
+        handleNext();
+      }, 1500); // 1.5 second delay
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showResult, autoContinue]);
+
   const handleAnswer = (optionId: string) => {
     if (showResult) return;
-    
+
     setSelectedOption(optionId);
     const result = answerQuestion(getCurrentExercise()?.id || '', optionId);
     setIsCorrect(result.correct);
@@ -56,10 +87,13 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   const handleNext = () => {
     setSelectedOption(null);
     setShowResult(false);
-    
+    setIsCorrect(false);
+
     if (session && session.currentIndex >= session.queue.length - 1) {
       endSession();
       setSessionComplete(true);
+    } else {
+      nextQuestion();
     }
   };
 
@@ -157,9 +191,20 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
           >
             ✕ Exit
           </button>
-          <span className="text-sm text-gray-500">
-            {progress.current} / {progress.total}
-          </span>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={autoContinue}
+                onChange={(e) => setAutoContinue(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-600">Auto-continue</span>
+            </label>
+            <span className="text-sm text-gray-500">
+              {progress.current} / {progress.total}
+            </span>
+          </div>
         </div>
         
         {/* Progress bar */}
@@ -205,14 +250,14 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
 
             {exercise.type === 'hanzi-to-pinyin' && (
               <div>
-                <div className="text-6xl font-bold text-gray-800 mb-2">{exercise.question}</div>
+                <div className="text-7xl text-gray-800 mb-2 font-hanzi">{exercise.question}</div>
                 <p className="text-gray-500">Select the correct pinyin</p>
               </div>
             )}
 
             {exercise.type === 'pinyin-to-hanzi' && (
               <div>
-                <div className="text-4xl font-medium text-blue-600 mb-2">{exercise.question}</div>
+                <div className="text-7xl text-blue-600 mb-2 font-hanzi-sans">{exercise.question}</div>
                 <p className="text-gray-500">Select the correct hanzi</p>
               </div>
             )}
@@ -239,8 +284,11 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
           <div className="space-y-3">
             {exercise.options.map((option) => {
               let buttonClass = 'w-full p-4 rounded-xl border-2 text-left transition-all ';
-              
-              if (showResult) {
+
+              // Only show result state if the selected option belongs to this exercise
+              const selectedOptionBelongsToCurrentExercise = selectedOption && exercise.options.some(opt => opt.id === selectedOption);
+
+              if (showResult && selectedOptionBelongsToCurrentExercise) {
                 if (option.isCorrect) {
                   buttonClass += 'border-green-500 bg-green-50 text-green-700';
                 } else if (selectedOption === option.id && !isCorrect) {
@@ -258,20 +306,20 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                 <button
                   key={option.id}
                   onClick={() => handleAnswer(option.id)}
-                  disabled={showResult}
+                  disabled={!!(showResult && selectedOptionBelongsToCurrentExercise)}
                   className={buttonClass}
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-xl font-medium">{option.text}</div>
+                      <div className={`text-3xl ${exercise.type === 'pinyin-to-hanzi' || exercise.type === 'hanzi-to-english' ? 'font-hanzi-sans' : ''}`}>{option.text}</div>
                       {option.subtext && (
                         <div className="text-sm text-gray-500 mt-1">{option.subtext}</div>
                       )}
                     </div>
-                    {showResult && option.isCorrect && (
+                    {showResult && selectedOptionBelongsToCurrentExercise && option.isCorrect && (
                       <Check className="text-green-500" size={24} />
                     )}
-                    {showResult && selectedOption === option.id && !isCorrect && (
+                    {showResult && selectedOptionBelongsToCurrentExercise && selectedOption === option.id && !isCorrect && (
                       <X className="text-red-500" size={24} />
                     )}
                   </div>
@@ -312,7 +360,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
         </div>
 
         {/* Result feedback */}
-        {showResult && (
+        {showResult && selectedOption && exercise.options.some(opt => opt.id === selectedOption) && (
           <div className={`mt-4 p-4 rounded-xl text-center ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {isCorrect ? (
               <div className="flex items-center justify-center gap-2">

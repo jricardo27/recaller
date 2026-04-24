@@ -2,14 +2,58 @@ import { useState, useEffect } from 'react';
 import { Study } from './components/Study/Study';
 import { WordManager } from './components/WordManager/WordManager';
 import { Stats } from './components/Stats/Stats';
-import { ExerciseMenu } from './components/Exercise/ExerciseMenu';
 import { Exercise } from './components/Exercise/Exercise';
 import { useWordStore } from './stores/wordStore';
+import { useExerciseStore } from './stores/exerciseStore';
 import type { WordsDatabase } from './types';
 import type { ExerciseType, ExerciseDifficulty } from './types/exercise';
-import { Play, Settings, BarChart3, BookOpen, Brain, Dumbbell } from 'lucide-react';
+import { Play, Settings, BarChart3, BookOpen, Brain, Image, Type, ArrowRightLeft, Globe, Languages, ChevronRight } from 'lucide-react';
 
-type View = 'home' | 'study' | 'words' | 'stats' | 'exercise-menu' | 'exercise';
+type View = 'home' | 'study' | 'words' | 'stats' | 'exercise';
+
+const exerciseTypes: {
+  type: ExerciseType;
+  title: string;
+  description: string;
+  icon: typeof Image;
+  color: string;
+}[] = [
+  {
+    type: 'image-to-hanzi',
+    title: 'Image to Word',
+    description: 'See an image, select the matching hanzi',
+    icon: Image,
+    color: 'from-purple-500 to-pink-500',
+  },
+  {
+    type: 'hanzi-to-pinyin',
+    title: 'Hanzi to Pinyin',
+    description: 'See hanzi, select the correct pinyin',
+    icon: Type,
+    color: 'from-blue-500 to-cyan-500',
+  },
+  {
+    type: 'pinyin-to-hanzi',
+    title: 'Pinyin to Hanzi',
+    description: 'Hear/see pinyin, select the matching hanzi',
+    icon: ArrowRightLeft,
+    color: 'from-green-500 to-emerald-500',
+  },
+  {
+    type: 'english-to-hanzi',
+    title: 'English to Hanzi',
+    description: 'See English, select the correct hanzi/pinyin',
+    icon: Globe,
+    color: 'from-orange-500 to-red-500',
+  },
+  {
+    type: 'hanzi-to-english',
+    title: 'Hanzi to English',
+    description: 'See hanzi, select the English meaning',
+    icon: Languages,
+    color: 'from-indigo-500 to-purple-500',
+  },
+];
 
 function App() {
   const [view, setView] = useState<View>('home');
@@ -21,6 +65,8 @@ function App() {
   const stats = useWordStore(state => state.getStats());
   const words = useWordStore(state => state.words);
   const loadWords = useWordStore(state => state.loadWords);
+  const exerciseStats = useExerciseStore(state => state.stats);
+  const endSession = useExerciseStore(state => state.endSession);
 
   // Load words from JSON on mount
   useEffect(() => {
@@ -119,30 +165,21 @@ function App() {
     );
   }
 
-  if (view === 'exercise-menu') {
-    return (
-      <ExerciseMenu
-        onSelectExercise={(type, difficulty) => {
-          setExerciseConfig({ type, difficulty });
-          setView('exercise');
-        }}
-        onBack={() => setView('home')}
-      />
-    );
-  }
-
   if (view === 'exercise' && exerciseConfig) {
     return (
       <Exercise
+        key={exerciseConfig.type}
         type={exerciseConfig.type}
         difficulty={exerciseConfig.difficulty}
         onFinish={() => {
+          endSession();
           setExerciseConfig(null);
-          setView('exercise-menu');
+          setView('home');
         }}
         onExit={() => {
+          endSession();
           setExerciseConfig(null);
-          setView('exercise-menu');
+          setView('home');
         }}
       />
     );
@@ -194,14 +231,6 @@ function App() {
             Start Studying
           </button>
 
-          <button
-            onClick={() => setView('exercise-menu')}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition flex items-center justify-center gap-3"
-          >
-            <Dumbbell size={24} />
-            Practice Exercises
-          </button>
-
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => setView('words')}
@@ -220,8 +249,52 @@ function App() {
           </div>
         </div>
 
+        {/* Exercise Types */}
+        <div className="mt-6">
+          <h2 className="text-sm font-medium text-gray-600 mb-3 uppercase tracking-wide">
+            Practice Exercises
+          </h2>
+          <div className="space-y-3">
+            {exerciseTypes.map((exercise) => {
+              const Icon = exercise.icon;
+              const typeStats = exerciseStats.byType[exercise.type];
+
+              return (
+                <button
+                  key={exercise.type}
+                  onClick={() => {
+                    setExerciseConfig({ type: exercise.type, difficulty: 'medium' });
+                    setView('exercise');
+                  }}
+                  className="w-full p-4 rounded-2xl border-2 border-white bg-white hover:border-blue-200 hover:shadow-sm transition-all text-left"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${exercise.color} flex items-center justify-center flex-shrink-0`}>
+                      <Icon size={24} className="text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-800">{exercise.title}</h3>
+                      <p className="text-sm text-gray-500 mb-2">{exercise.description}</p>
+                      {typeStats && typeStats.completed > 0 && (
+                        <div className="flex items-center gap-3 text-xs text-gray-400">
+                          <span>{typeStats.completed} completed</span>
+                          <span>•</span>
+                          <span>{Math.round((typeStats.correct / typeStats.completed) * 100)}% accuracy</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                      <ChevronRight size={16} className="text-gray-400" />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Info */}
-        <div className="mt-8 space-y-3">
+        <div className="mt-8">
           <div className="p-4 bg-blue-50 rounded-xl">
             <div className="flex items-start gap-3">
               <Settings size={20} className="text-blue-600 mt-0.5" />
@@ -230,18 +303,6 @@ function App() {
                 <p className="text-sm text-blue-700 mt-1">
                   This app uses the SM-2 algorithm to optimize your learning.
                   Words you find easy will appear less frequently.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 bg-purple-50 rounded-xl">
-            <div className="flex items-start gap-3">
-              <Dumbbell size={20} className="text-purple-600 mt-0.5" />
-              <div>
-                <h3 className="font-medium text-purple-900">Practice Exercises</h3>
-                <p className="text-sm text-purple-700 mt-1">
-                  Try multiple exercise types: Image to Hanzi, Hanzi to Pinyin,
-                  English to Hanzi, and more!
                 </p>
               </div>
             </div>

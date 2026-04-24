@@ -19,6 +19,15 @@ body {
   min-height: 100vh;
 }
 
+/* Chinese font families */
+.font-hanzi {
+  font-family: 'Noto Serif SC', 'Noto Sans SC', sans-serif;
+}
+
+.font-hanzi-sans {
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
 /* Smooth transitions */
 .transition {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
