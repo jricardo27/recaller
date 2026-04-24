@@ -57,7 +57,6 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setSelectedOption(null);
     setShowResult(false);
     setIsCorrect(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.currentIndex]);
 
   // Save autoContinue preference
