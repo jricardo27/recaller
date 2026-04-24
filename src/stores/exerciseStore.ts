@@ -245,7 +245,7 @@ export const useExerciseStore = create<ExerciseState>()(
         }
         session.streak = newStreak;
         session.maxStreak = newMaxStreak;
-        session.currentIndex++;
+        // Don't auto-advance - let user see result first
 
         set({ session });
 

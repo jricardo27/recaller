@@ -28,6 +28,10 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   const [isCorrect, setIsCorrect] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [autoContinue, setAutoContinue] = useState(() => {
+    const saved = localStorage.getItem('autoContinue');
+    return saved ? JSON.parse(saved) : true;
+  });
 
   // Start session on mount
   useEffect(() => {
@@ -56,6 +60,22 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.currentIndex]);
 
+  // Save autoContinue preference
+  useEffect(() => {
+    localStorage.setItem('autoContinue', JSON.stringify(autoContinue));
+  }, [autoContinue]);
+
+  // Auto-continue when result is shown
+  useEffect(() => {
+    if (showResult && autoContinue) {
+      const timer = setTimeout(() => {
+        handleNext();
+      }, 1500); // 1.5 second delay
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showResult, autoContinue]);
+
   const handleAnswer = (optionId: string) => {
     if (showResult) return;
 
@@ -63,9 +83,6 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     const result = answerQuestion(getCurrentExercise()?.id || '', optionId);
     setIsCorrect(result.correct);
     setShowResult(true);
-
-    // Reset selection immediately since answerQuestion increments the index
-    setSelectedOption(null);
   };
 
   const handleNext = () => {
@@ -175,9 +192,20 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
           >
             ✕ Exit
           </button>
-          <span className="text-sm text-gray-500">
-            {progress.current} / {progress.total}
-          </span>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={autoContinue}
+                onChange={(e) => setAutoContinue(e.target.checked)}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-600">Auto-continue</span>
+            </label>
+            <span className="text-sm text-gray-500">
+              {progress.current} / {progress.total}
+            </span>
+          </div>
         </div>
         
         {/* Progress bar */}
