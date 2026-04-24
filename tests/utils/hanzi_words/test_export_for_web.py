@@ -11,8 +11,8 @@ from pathlib import Path
 import sys
 import os
 
-# Add parent directory to path to import the module
-sys.path.insert(0, str(Path(__file__).parent))
+# Add utils/hanzi_words directory to path to import the module
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / 'utils' / 'hanzi_words'))
 
 from export_for_web import export_words
 

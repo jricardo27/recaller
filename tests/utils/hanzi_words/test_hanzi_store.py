@@ -10,8 +10,8 @@ import os
 from pathlib import Path
 import sys
 
-# Add parent directory to path to import the module
-sys.path.insert(0, str(Path(__file__).parent))
+# Add utils/hanzi_words directory to path to import the module
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / 'utils' / 'hanzi_words'))
 
 from hanzi_store import HanziStore
 
