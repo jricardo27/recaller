@@ -53,7 +53,7 @@ def export_words(db_path: str, output_path: str) -> dict:
         "version": "1.0",
         "exportedAt": datetime.now().isoformat(),
         "wordCount": len(words),
-        "source": str(db_path),
+        "source": db_path.name,
         "words": words
     }
     
