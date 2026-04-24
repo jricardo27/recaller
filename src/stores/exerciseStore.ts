@@ -62,8 +62,9 @@ function generatePinyinDistractors(correctPinyin: string, allWords: Word[]): str
 
 // Generate exercises based on type
 function generateExercises(
-  type: ExerciseType, 
-  words: Word[], 
+  type: ExerciseType,
+  words: Word[],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _difficulty: ExerciseDifficulty
 ): Exercise[] {
   const enabledWords = words.filter(w => w.enabled);

@@ -131,6 +131,7 @@ export const useWordStore = create<WordState>()(
 
       resetWord: (wordId) => {
         set((state) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { [wordId]: _, ...remainingCards } = state.cards;
           return { cards: remainingCards };
         });
