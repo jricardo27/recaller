@@ -16,6 +16,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   const session = useExerciseStore(state => state.session);
   const startSession = useExerciseStore(state => state.startSession);
   const answerQuestion = useExerciseStore(state => state.answerQuestion);
+  const nextQuestion = useExerciseStore(state => state.nextQuestion);
   const skipQuestion = useExerciseStore(state => state.skipQuestion);
   const endSession = useExerciseStore(state => state.endSession);
   const getCurrentExercise = useExerciseStore(state => state.getCurrentExercise);
@@ -44,22 +45,36 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.currentIndex]);
 
+  // Reset state when exercise changes
+  useEffect(() => {
+    setSelectedOption(null);
+    setShowResult(false);
+    setIsCorrect(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.currentIndex]);
+
   const handleAnswer = (optionId: string) => {
     if (showResult) return;
-    
+
     setSelectedOption(optionId);
     const result = answerQuestion(getCurrentExercise()?.id || '', optionId);
     setIsCorrect(result.correct);
     setShowResult(true);
+
+    // Reset selection immediately since answerQuestion increments the index
+    setSelectedOption(null);
   };
 
   const handleNext = () => {
     setSelectedOption(null);
     setShowResult(false);
-    
+    setIsCorrect(false);
+
     if (session && session.currentIndex >= session.queue.length - 1) {
       endSession();
       setSessionComplete(true);
+    } else {
+      nextQuestion();
     }
   };
 
@@ -205,7 +220,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
 
             {exercise.type === 'hanzi-to-pinyin' && (
               <div>
-                <div className="text-6xl font-bold text-gray-800 mb-2">{exercise.question}</div>
+                <div className="text-8xl font-bold text-gray-800 mb-2">{exercise.question}</div>
                 <p className="text-gray-500">Select the correct pinyin</p>
               </div>
             )}
@@ -239,8 +254,11 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
           <div className="space-y-3">
             {exercise.options.map((option) => {
               let buttonClass = 'w-full p-4 rounded-xl border-2 text-left transition-all ';
-              
-              if (showResult) {
+
+              // Only show result state if the selected option belongs to this exercise
+              const selectedOptionBelongsToCurrentExercise = selectedOption && exercise.options.some(opt => opt.id === selectedOption);
+
+              if (showResult && selectedOptionBelongsToCurrentExercise) {
                 if (option.isCorrect) {
                   buttonClass += 'border-green-500 bg-green-50 text-green-700';
                 } else if (selectedOption === option.id && !isCorrect) {
@@ -258,7 +276,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                 <button
                   key={option.id}
                   onClick={() => handleAnswer(option.id)}
-                  disabled={showResult}
+                  disabled={showResult && selectedOptionBelongsToCurrentExercise}
                   className={buttonClass}
                 >
                   <div className="flex items-center justify-between">
@@ -268,10 +286,10 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                         <div className="text-sm text-gray-500 mt-1">{option.subtext}</div>
                       )}
                     </div>
-                    {showResult && option.isCorrect && (
+                    {showResult && selectedOptionBelongsToCurrentExercise && option.isCorrect && (
                       <Check className="text-green-500" size={24} />
                     )}
-                    {showResult && selectedOption === option.id && !isCorrect && (
+                    {showResult && selectedOptionBelongsToCurrentExercise && selectedOption === option.id && !isCorrect && (
                       <X className="text-red-500" size={24} />
                     )}
                   </div>
@@ -312,7 +330,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
         </div>
 
         {/* Result feedback */}
-        {showResult && (
+        {showResult && selectedOption && exercise.options.some(opt => opt.id === selectedOption) && (
           <div className={`mt-4 p-4 rounded-xl text-center ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {isCorrect ? (
               <div className="flex items-center justify-center gap-2">

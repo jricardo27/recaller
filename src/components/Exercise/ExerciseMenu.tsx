@@ -70,12 +70,11 @@ const exerciseTypes: {
 
 export function ExerciseMenu({ onSelectExercise, onBack }: ExerciseMenuProps) {
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
-  const [difficulty, setDifficulty] = useState<ExerciseDifficulty>('medium');
   const stats = useExerciseStore(state => state.stats);
 
   const handleStart = () => {
     if (selectedType) {
-      onSelectExercise(selectedType, difficulty);
+      onSelectExercise(selectedType, 'medium');
     }
   };
 
@@ -109,28 +108,6 @@ export function ExerciseMenu({ onSelectExercise, onBack }: ExerciseMenuProps) {
               <div className="font-medium text-blue-600">{Math.round(stats.correctRate)}%</div>
               <div className="text-xs text-gray-500">Accuracy</div>
             </div>
-          </div>
-        </div>
-
-        {/* Difficulty Selection */}
-        <div className="mb-6">
-          <h2 className="text-sm font-medium text-gray-600 mb-3 uppercase tracking-wide">
-            Select Difficulty
-          </h2>
-          <div className="flex gap-2">
-            {(['easy', 'medium', 'hard'] as ExerciseDifficulty[]).map((d) => (
-              <button
-                key={d}
-                onClick={() => setDifficulty(d)}
-                className={`flex-1 py-2 px-4 rounded-xl font-medium text-sm transition ${
-                  difficulty === d
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                {d.charAt(0).toUpperCase() + d.slice(1)}
-              </button>
-            ))}
           </div>
         </div>
 

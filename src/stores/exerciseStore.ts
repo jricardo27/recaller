@@ -20,6 +20,7 @@ interface ExerciseState {
   // Actions
   startSession: (type: ExerciseType, words: Word[], difficulty: ExerciseDifficulty) => void;
   answerQuestion: (exerciseId: string, selectedOptionId: string) => { correct: boolean; correctAnswer: string };
+  nextQuestion: () => void;
   skipQuestion: () => void;
   endSession: () => void;
   resetStats: () => void;
@@ -105,14 +106,14 @@ function generateExercises(
       case 'hanzi-to-pinyin': {
         exercise.question = word.hanzi;
         exercise.questionData = { hanzi: word.hanzi };
-        
+
         const pinyinOptions = generatePinyinDistractors(word.pinyin, enabledWords);
         const options: ExerciseOption[] = pinyinOptions.map((p, i) => ({
-          id: `opt-${i}`,
+          id: `${exercise.id}-opt-${i}-${crypto.randomUUID()}`,
           text: p,
           isCorrect: p === word.pinyin
         }));
-        
+
         exercise.options = options;
         exercise.correctAnswer = options.find(o => o.isCorrect)?.id || '';
         break;
@@ -217,18 +218,18 @@ export const useExerciseStore = create<ExerciseState>()(
       answerQuestion: (_exerciseId, selectedOptionId) => {
         const state = get();
         const session = state.session;
-        
+
         if (!session) {
           return { correct: false, correctAnswer: '' };
         }
-        
+
         const currentExercise = session.queue[session.currentIndex];
         const isCorrect = selectedOptionId === currentExercise.correctAnswer;
-        
+
         // Update session
         const newStreak = isCorrect ? session.streak + 1 : 0;
         const newMaxStreak = Math.max(session.maxStreak, newStreak);
-        
+
         session.totalAnswered++;
         if (isCorrect) {
           session.correctAnswers++;
@@ -237,13 +238,23 @@ export const useExerciseStore = create<ExerciseState>()(
         session.streak = newStreak;
         session.maxStreak = newMaxStreak;
         session.currentIndex++;
-        
+
         set({ session });
-        
-        return { 
-          correct: isCorrect, 
-          correctAnswer: currentExercise.correctAnswer 
+
+        return {
+          correct: isCorrect,
+          correctAnswer: currentExercise.correctAnswer
         };
+      },
+
+      nextQuestion: () => {
+        const state = get();
+        const session = state.session;
+
+        if (!session) return;
+
+        session.currentIndex++;
+        set({ session });
       },
 
       skipQuestion: () => {
