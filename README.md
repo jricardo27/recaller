@@ -20,7 +20,7 @@ A React-based spaced repetition app for learning Mandarin Chinese characters.
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Export words from database (run from utils/hanzi_words)
 cd utils/hanzi_words
@@ -28,23 +28,23 @@ uv run python export_for_web.py --output ../../src/data/words.json
 
 # Start dev server
 cd ../..
-npm run dev
+pnpm run dev
 ```
 
 ## Development Commands
 
 ```bash
 # Type check
-npm run type-check
+pnpm run type-check
 
 # Lint
-npm run lint
+pnpm run lint
 
 # Lint and auto-fix
-npm run lint:fix
+pnpm run lint:fix
 
 # Run all checks (TypeScript + ESLint)
-npm run verify
+pnpm run verify
 
 # All checks run automatically on git commit via husky + lint-staged
 ```
@@ -53,10 +53,10 @@ npm run verify
 
 ```bash
 # Export database first
-npm run export-db
+pnpm run export-db
 
 # Build
-npm run build
+pnpm run build
 ```
 
 ## Deployment to GitHub Pages
