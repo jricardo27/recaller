@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "exportedAt": "2026-04-24T22:13:43.576794",
-  "wordCount": 388,
+  "exportedAt": "2026-04-24T22:16:03.454480",
+  "wordCount": 387,
   "source": "/Users/ricardoperez/pcode/recaller/utils/hanzi_words/hanzi_words.db",
   "words": [
     {
@@ -2606,13 +2606,6 @@
       "hanzi": "妈妈",
       "pinyin": "mā mā",
       "translation": "Mom!",
-      "enabled": true
-    },
-    {
-      "id": 374,
-      "hanzi": "⻢",
-      "pinyin": "",
-      "translation": "",
       "enabled": true
     },
     {
