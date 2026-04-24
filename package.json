@@ -11,7 +11,8 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --ext ts,tsx --fix",
     "type-check": "tsc --noEmit",
-    "verify": "pnpm run type-check && pnpm run lint"
+    "verify": "pnpm run type-check && pnpm run lint",
+    "prepare": "husky"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -41,8 +42,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint --fix",
-      "tsc --noEmit"
+      "eslint --fix"
     ]
   },
   "engines": {

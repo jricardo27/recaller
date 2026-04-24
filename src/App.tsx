@@ -7,7 +7,7 @@ import { useWordStore } from './stores/wordStore';
 import { useExerciseStore } from './stores/exerciseStore';
 import type { WordsDatabase } from './types';
 import type { ExerciseType, ExerciseDifficulty } from './types/exercise';
-import { Play, Settings, BarChart3, BookOpen, Brain, Dumbbell, Image, Type, ArrowRightLeft, Globe, Languages, ChevronRight, Trophy, Target } from 'lucide-react';
+import { Play, Settings, BarChart3, BookOpen, Brain, Image, Type, ArrowRightLeft, Globe, Languages, ChevronRight } from 'lucide-react';
 
 type View = 'home' | 'study' | 'words' | 'stats' | 'exercise';
 
