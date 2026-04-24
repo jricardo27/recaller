@@ -306,7 +306,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                 <button
                   key={option.id}
                   onClick={() => handleAnswer(option.id)}
-                  disabled={showResult && selectedOptionBelongsToCurrentExercise}
+                  disabled={!!(showResult && selectedOptionBelongsToCurrentExercise)}
                   className={buttonClass}
                 >
                   <div className="flex items-center justify-between">
