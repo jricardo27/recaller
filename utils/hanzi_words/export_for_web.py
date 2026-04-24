@@ -21,13 +21,14 @@ def export_words(db_path: str, output_path: str) -> dict:
     Returns:
         Export statistics
     """
-    db_path = Path(db_path)
     output_path = Path(output_path)
-    
-    if not db_path.exists():
-        # Use default location if not specified
+
+    # Use default location if not specified or empty
+    if not db_path:
         db_path = Path(__file__).parent / "hanzi_words.db"
-    
+    else:
+        db_path = Path(db_path)
+
     if not db_path.exists():
         raise FileNotFoundError(f"Database not found: {db_path}")
     
