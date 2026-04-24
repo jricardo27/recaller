@@ -89,9 +89,11 @@ function generateExercises(
           english: word.translation 
         };
         
-        // Generate 4 options including correct one
-        const options: ExerciseOption[] = shuffle(enabledWords)
-          .filter(w => w.id !== word.id)
+        // Filter distractors to have same hanzi length as correct answer
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+        const options: ExerciseOption[] = shuffle(sameLengthWords)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
         
@@ -122,15 +124,18 @@ function generateExercises(
       case 'pinyin-to-hanzi': {
         exercise.question = word.pinyin;
         exercise.questionData = { pinyin: word.pinyin };
-        
-        const options: ExerciseOption[] = shuffle(enabledWords)
-          .filter(w => w.id !== word.id)
+
+        // Filter distractors to have same hanzi length as correct answer
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+        const options: ExerciseOption[] = shuffle(sameLengthWords)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.translation, isCorrect: false }));
-        
+
         const correctId = `opt-${word.id}`;
         options.push({ id: correctId, text: word.hanzi, subtext: word.translation, isCorrect: true });
-        
+
         exercise.options = shuffle(options);
         exercise.correctAnswer = correctId;
         break;
@@ -139,9 +144,12 @@ function generateExercises(
       case 'english-to-hanzi': {
         exercise.question = word.translation;
         exercise.questionData = { english: word.translation };
-        
-        const options: ExerciseOption[] = shuffle(enabledWords)
-          .filter(w => w.id !== word.id)
+
+        // Filter distractors to have same hanzi length as correct answer
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+        const options: ExerciseOption[] = shuffle(sameLengthWords)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
         
