@@ -34,7 +34,7 @@ cd dist
 # Initialize git if needed
 if [ ! -d ".git" ]; then
     git init -b gh-pages
-    git remote add origin https://github.com/jricardo27/learn_chinese.git
+    git remote add origin https://github.com/jricardo27/recaller.git
 fi
 
 # Add and commit
@@ -48,4 +48,4 @@ git push -f origin gh-pages:gh-pages || {
 }
 
 echo "✅ Deployed successfully!"
-echo "🌐 Your app will be available at: https://jricardo27.github.io/learn_chinese/"
+echo "🌐 Your app will be available at: https://jricardo27.github.io/recaller/"

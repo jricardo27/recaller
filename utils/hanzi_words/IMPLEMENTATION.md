@@ -85,7 +85,7 @@ The `list_words()` method supports:
 ### Setup
 
 ```bash
-cd /Users/ricardoperez/pcode/learn_chinese/utils/hanzi_words
+cd /Users/ricardoperez/pcode/recaller/utils/hanzi_words
 uv sync
 ```
 

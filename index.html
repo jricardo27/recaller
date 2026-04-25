@@ -15,6 +15,38 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Unregister any stale service workers from old PWA setup
+      (function() {
+        var needReload = false;
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            if (registrations.length > 0) {
+              needReload = true;
+              registrations.forEach(function(registration) {
+                registration.unregister();
+              });
+            }
+          });
+          // Clear all caches from old PWA
+          if ('caches' in window) {
+            caches.keys().then(function(cacheNames) {
+              if (cacheNames.length > 0) {
+                needReload = true;
+                cacheNames.forEach(function(cacheName) {
+                  caches.delete(cacheName);
+                });
+              }
+            });
+          }
+          // Reload once to clear stale service worker
+          if (needReload && !sessionStorage.getItem('sw-cleared')) {
+            sessionStorage.setItem('sw-cleared', 'true');
+            window.location.reload();
+          }
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

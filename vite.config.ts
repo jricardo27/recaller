@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [
     react()
   ],
-  base: '/learn_chinese/',
+  base: '/recaller/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
