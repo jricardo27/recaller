@@ -21,14 +21,29 @@ describe('Exercise session persistence', () => {
     vi.mocked(exerciseStore.useExerciseStore).mockImplementation((selector) => {
       const state = {
         session: {
+          type: 'hanzi-to-pinyin' as import('../types/exercise').ExerciseType,
+          queue: [{}, {}, {}, {}, {}] as import('../types/exercise').Exercise[], // 5 items in queue
           currentIndex: 5,
-          queue: [{}, {}, {}, {}, {}], // 5 items in queue
+          score: 5,
+          totalAnswered: 5,
+          correctAnswers: 5,
+          streak: 5,
+          maxStreak: 5,
+          startTime: new Date().toISOString(),
+        },
+        stats: {
+          totalExercises: 0,
+          completedExercises: 0,
+          correctRate: 0,
+          averageTime: 0,
+          byType: {} as Record<import('../types/exercise').ExerciseType, { completed: number; correct: number }>,
         },
         startSession: vi.fn(),
         endSession: mockEndSession,
         answerQuestion: vi.fn(),
         nextQuestion: vi.fn(),
         skipQuestion: vi.fn(),
+        resetStats: vi.fn(),
         getCurrentExercise: vi.fn().mockReturnValue(null),
         getProgress: vi.fn().mockReturnValue({ current: 5, total: 5 }),
         getScore: mockGetScore,
@@ -40,6 +55,24 @@ describe('Exercise session persistence', () => {
     vi.mocked(wordStore.useWordStore).mockImplementation((selector) => {
       const state = {
         words: [],
+        cards: {},
+        session: null,
+        loadWords: vi.fn(),
+        startSession: vi.fn(),
+        rateCard: vi.fn(),
+        toggleWord: vi.fn(),
+        resetWord: vi.fn(),
+        getDueCards: vi.fn().mockReturnValue([]),
+        getNewWords: vi.fn().mockReturnValue([]),
+        getAllWords: vi.fn().mockReturnValue([]),
+        getSessionWord: vi.fn().mockReturnValue(null),
+        getStats: vi.fn().mockReturnValue({
+          total: 0,
+          enabled: 0,
+          due: 0,
+          new: 0,
+          mastered: 0,
+        }),
       };
       return selector(state);
     });
