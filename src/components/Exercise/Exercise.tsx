@@ -34,6 +34,13 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   });
   const [finalScore, setFinalScore] = useState<{correct: number; total: number; percentage: number} | null>(null);
 
+  // Helper function to complete session - extracted to avoid duplication
+  const completeSession = () => {
+    setFinalScore(getScore());
+    endSession();
+    setSessionComplete(true);
+  };
+
   // Start session on mount
   useEffect(() => {
     if (!session) {
@@ -48,11 +55,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   // Check if session is complete
   useEffect(() => {
     if (session && session.currentIndex >= session.queue.length) {
-      // Capture final score before session is cleared
-      setFinalScore(getScore());
-      // Persist session statistics to global store
-      endSession();
-      setSessionComplete(true);
+      completeSession();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.currentIndex]);
@@ -95,10 +98,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setIsCorrect(false);
 
     if (session && session.currentIndex >= session.queue.length - 1) {
-      // Capture final score before ending session
-      setFinalScore(getScore());
-      endSession();
-      setSessionComplete(true);
+      completeSession();
     } else {
       nextQuestion();
     }

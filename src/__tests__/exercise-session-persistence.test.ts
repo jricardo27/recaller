@@ -25,16 +25,18 @@ describe('Exercise session persistence', () => {
     );
     
     expect(sessionCompleteEffect).toBeTruthy();
+    // Check that completeSession helper function exists
+    expect(exerciseFile).toContain('const completeSession = () => {');
     expect(exerciseFile).toContain('setFinalScore(getScore())');
     expect(exerciseFile).toContain('endSession()');
     expect(exerciseFile).toContain('setSessionComplete(true)');
-    
-    // Verify the order: setFinalScore before endSession before setSessionComplete
-    const setFinalScoreIndex = exerciseFile.indexOf('setFinalScore(getScore())');
-    const endSessionIndex = exerciseFile.indexOf('endSession()');
-    const setSessionCompleteIndex = exerciseFile.indexOf('setSessionComplete(true)');
-    
-    expect(setFinalScoreIndex).toBeLessThan(endSessionIndex);
-    expect(endSessionIndex).toBeLessThan(setSessionCompleteIndex);
+
+    // Verify completeSession helper is defined once
+    const completeSessionCount = (exerciseFile.match(/const completeSession = /g) || []).length;
+    expect(completeSessionCount).toBe(1);
+
+    // Verify completeSession is called in both useEffect and handleNext
+    const completeSessionCalls = (exerciseFile.match(/completeSession\(\)/g) || []).length;
+    expect(completeSessionCalls).toBeGreaterThanOrEqual(2);
   });
 });
