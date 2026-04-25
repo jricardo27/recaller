@@ -73,7 +73,7 @@ Pushes to `main` branch automatically trigger deployment via GitHub Actions.
 
 Your app will be available at:
 ```
-https://jricardo27.github.io/learn_chinese/
+https://jricardo27.github.io/recaller/
 ```
 
 ## Configuration
