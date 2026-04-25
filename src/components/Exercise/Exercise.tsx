@@ -32,11 +32,17 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     const saved = localStorage.getItem('autoContinue');
     return saved ? JSON.parse(saved) : true;
   });
-  const [finalScore, setFinalScore] = useState<{correct: number; total: number; percentage: number} | null>(null);
+  const [finalScore, setFinalScore] = useState<{correct: number; total: number; percentage: number; maxStreak: number; score: number} | null>(null);
 
   // Helper function to complete session - extracted to avoid duplication
   const completeSession = () => {
-    setFinalScore(getScore());
+    if (session) {
+      setFinalScore({
+        ...getScore(),
+        maxStreak: session.maxStreak,
+        score: session.score
+      });
+    }
     endSession();
     setSessionComplete(true);
   };
@@ -111,7 +117,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   };
 
   if (sessionComplete) {
-    const score = finalScore || { correct: 0, total: 0, percentage: 0 };
+    const score = finalScore || { correct: 0, total: 0, percentage: 0, maxStreak: 0, score: 0 };
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div className="text-center max-w-md w-full">
@@ -139,11 +145,9 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
               </div>
             </div>
 
-            {session && (
-              <div className="text-sm text-gray-500">
-                🔥 Max Streak: {session.maxStreak} · Score: {session.score}
-              </div>
-            )}
+            <div className="text-sm text-gray-500">
+              🔥 Max Streak: {score.maxStreak} · Score: {score.score}
+            </div>
           </div>
 
           <div className="flex gap-3">
