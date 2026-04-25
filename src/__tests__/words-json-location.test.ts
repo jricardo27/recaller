@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -16,5 +16,12 @@ describe('words.json location', () => {
   it('should NOT exist in src/data directory (old location)', () => {
     const oldPath = join(__dirname, '../../src/data/words.json');
     expect(existsSync(oldPath)).toBe(false);
+  });
+
+  it('should use import.meta.env.BASE_URL for fetch path', () => {
+    const appPath = join(__dirname, '../App.tsx');
+    const appContent = readFileSync(appPath, 'utf-8');
+    expect(appContent).toContain('import.meta.env.BASE_URL');
+    expect(appContent).toContain('`${import.meta.env.BASE_URL}data/words.json`');
   });
 });
