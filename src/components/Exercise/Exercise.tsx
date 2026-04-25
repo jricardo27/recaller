@@ -50,6 +50,8 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     if (session && session.currentIndex >= session.queue.length) {
       // Capture final score before session is cleared
       setFinalScore(getScore());
+      // Persist session statistics to global store
+      endSession();
       setSessionComplete(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
