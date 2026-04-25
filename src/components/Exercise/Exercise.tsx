@@ -32,6 +32,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     const saved = localStorage.getItem('autoContinue');
     return saved ? JSON.parse(saved) : true;
   });
+  const [finalScore, setFinalScore] = useState<{correct: number; total: number; percentage: number} | null>(null);
 
   // Start session on mount
   useEffect(() => {
@@ -47,6 +48,8 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   // Check if session is complete
   useEffect(() => {
     if (session && session.currentIndex >= session.queue.length) {
+      // Capture final score before session is cleared
+      setFinalScore(getScore());
       setSessionComplete(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,6 +93,8 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setIsCorrect(false);
 
     if (session && session.currentIndex >= session.queue.length - 1) {
+      // Capture final score before ending session
+      setFinalScore(getScore());
       endSession();
       setSessionComplete(true);
     } else {
@@ -104,7 +109,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   };
 
   if (sessionComplete) {
-    const score = getScore();
+    const score = finalScore || { correct: 0, total: 0, percentage: 0 };
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div className="text-center max-w-md w-full">
@@ -115,7 +120,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
           <p className="text-gray-500 mb-6">
             Great job completing the exercise session
           </p>
-          
+
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div>
@@ -131,7 +136,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                 <div className="text-xs text-gray-500">Accuracy</div>
               </div>
             </div>
-            
+
             {session && (
               <div className="text-sm text-gray-500">
                 🔥 Max Streak: {session.maxStreak} · Score: {session.score}
