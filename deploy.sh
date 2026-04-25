@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 # Export latest words from database
 echo "📤 Exporting words from database..."
 cd utils/hanzi_words
-.venv/bin/python export_for_web.py --output ../../src/data/words.json
+.venv/bin/python export_for_web.py --output ../../public/data/words.json
 cd ../..
 
 # Install dependencies if needed

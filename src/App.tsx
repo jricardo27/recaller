@@ -72,7 +72,7 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await fetch('src/data/words.json');
+        const response = await fetch('/data/words.json');
         if (!response.ok) {
           throw new Error('Failed to load words database');
         }

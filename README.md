@@ -24,7 +24,7 @@ pnpm install
 
 # Export words from database (run from utils/hanzi_words)
 cd utils/hanzi_words
-uv run python export_for_web.py --output ../../src/data/words.json
+uv run python export_for_web.py --output ../../public/data/words.json
 
 # Start dev server
 cd ../..
@@ -142,10 +142,12 @@ src/
 ├── types/
 │   ├── index.ts        # Core TypeScript types
 │   └── exercise.ts     # Exercise types
-├── config/
-│   └── env.ts          # Environment configuration
+└── config/
+    └── env.ts          # Environment configuration
+
+public/
 └── data/
-    └── words.json      # Exported from SQLite
+    └── words.json      # Exported from SQLite (static assets)
 ```
 
 ## Database Integration
@@ -154,7 +156,7 @@ The app reads from a static JSON file exported from the SQLite database:
 
 ```bash
 # From utils/hanzi_words
-python export_for_web.py --output ../../src/data/words.json
+python export_for_web.py --output ../../public/data/words.json
 ```
 
 Progress is stored locally in the browser (localStorage + IndexedDB).
