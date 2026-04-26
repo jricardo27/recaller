@@ -63,7 +63,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     if (session && session.currentIndex >= session.queue.length) {
       completeSession();
     }
-  }, [session?.currentIndex, completeSession]);
+  }, [session, completeSession]);
 
   // Reset state when exercise changes
   useEffect(() => {
