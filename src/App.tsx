@@ -7,7 +7,7 @@ import { useWordStore } from './stores/wordStore';
 import { useExerciseStore } from './stores/exerciseStore';
 import type { WordsDatabase } from './types';
 import type { ExerciseType, ExerciseDifficulty } from './types/exercise';
-import { Play, Settings, BarChart3, BookOpen, Brain, Image, Type, ArrowRightLeft, Globe, Languages, ChevronRight } from 'lucide-react';
+import { Play, Settings, BarChart3, BookOpen, Brain, Image, Type, ArrowRightLeft, Globe, Languages, ChevronRight, Layers } from 'lucide-react';
 
 type View = 'home' | 'study' | 'words' | 'stats' | 'exercise';
 
@@ -52,6 +52,13 @@ const exerciseTypes: {
     description: 'See hanzi, select the English meaning',
     icon: Languages,
     color: 'from-indigo-500 to-purple-500',
+  },
+  {
+    type: 'triple-match',
+    title: 'Triple Match',
+    description: 'Match image + English to hanzi + pinyin (expert mode!)',
+    icon: Layers,
+    color: 'from-red-500 to-rose-600',
   },
 ];
 
