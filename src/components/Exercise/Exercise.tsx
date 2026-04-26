@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useExerciseStore } from '../../stores/exerciseStore';
 import { useWordStore } from '../../stores/wordStore';
 import type { ExerciseType, ExerciseDifficulty } from '../../types/exercise';
@@ -32,6 +32,20 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     const saved = localStorage.getItem('autoContinue');
     return saved ? JSON.parse(saved) : true;
   });
+  const [finalScore, setFinalScore] = useState<{correct: number; total: number; percentage: number; maxStreak: number; score: number} | null>(null);
+
+  // Helper function to complete session - extracted to avoid duplication
+  const completeSession = useCallback(() => {
+    if (session) {
+      setFinalScore({
+        ...getScore(),
+        maxStreak: session.maxStreak,
+        score: session.score
+      });
+    }
+    endSession();
+    setSessionComplete(true);
+  }, [session, getScore, endSession]);
 
   // Start session on mount
   useEffect(() => {
@@ -47,10 +61,9 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   // Check if session is complete
   useEffect(() => {
     if (session && session.currentIndex >= session.queue.length) {
-      setSessionComplete(true);
+      completeSession();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.currentIndex]);
+  }, [session, completeSession]);
 
   // Reset state when exercise changes
   useEffect(() => {
@@ -90,8 +103,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setIsCorrect(false);
 
     if (session && session.currentIndex >= session.queue.length - 1) {
-      endSession();
-      setSessionComplete(true);
+      completeSession();
     } else {
       nextQuestion();
     }
@@ -104,7 +116,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   };
 
   if (sessionComplete) {
-    const score = getScore();
+    const score = finalScore || { correct: 0, total: 0, percentage: 0, maxStreak: 0, score: 0 };
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
         <div className="text-center max-w-md w-full">
@@ -115,7 +127,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
           <p className="text-gray-500 mb-6">
             Great job completing the exercise session
           </p>
-          
+
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div>
@@ -131,12 +143,10 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                 <div className="text-xs text-gray-500">Accuracy</div>
               </div>
             </div>
-            
-            {session && (
-              <div className="text-sm text-gray-500">
-                🔥 Max Streak: {session.maxStreak} · Score: {session.score}
-              </div>
-            )}
+
+            <div className="text-sm text-gray-500">
+              🔥 Max Streak: {score.maxStreak} · Score: {score.score}
+            </div>
           </div>
 
           <div className="flex gap-3">
