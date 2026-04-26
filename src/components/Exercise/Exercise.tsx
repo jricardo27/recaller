@@ -236,6 +236,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
             {exercise.type === 'pinyin-to-hanzi' && '🔊 Pinyin to Hanzi'}
             {exercise.type === 'english-to-hanzi' && '🌐 English to Hanzi'}
             {exercise.type === 'hanzi-to-english' && '🇨🇳 Hanzi to English'}
+            {exercise.type === 'triple-match' && '🎯 Triple Match (Expert)'}
           </div>
 
           {/* Question content */}
@@ -286,6 +287,27 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                   <p className="text-lg text-blue-500 mb-2">{exercise.questionData.pinyin}</p>
                 )}
                 <p className="text-gray-500">Select the correct meaning</p>
+              </div>
+            )}
+
+            {exercise.type === 'triple-match' && (
+              <div className="mb-4">
+                <div className="text-xl font-medium text-gray-800 mb-3">
+                  {exercise.questionData?.english}
+                </div>
+                {exercise.questionData?.imageUrl && !imageErrors[exercise.id] ? (
+                  <img
+                    src={exercise.questionData.imageUrl}
+                    alt="Question"
+                    className="w-48 h-48 object-contain mx-auto rounded-lg"
+                    onError={() => setImageErrors(prev => ({ ...prev, [exercise.id]: true }))}
+                  />
+                ) : (
+                  <div className="w-48 h-48 mx-auto bg-gray-100 rounded-lg flex items-center justify-center">
+                    <ImageIcon size={48} className="text-gray-300" />
+                  </div>
+                )}
+                <p className="text-gray-500 mt-3">Select the matching hanzi + pinyin</p>
               </div>
             )}
           </div>

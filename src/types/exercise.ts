@@ -1,12 +1,13 @@
 // Exercise types for different learning modes
 
-export type ExerciseType = 
+export type ExerciseType =
   | 'flashcard'      // Original: show hanzi, reveal pinyin/translation
   | 'image-to-hanzi' // Show image, select hanzi
   | 'hanzi-to-pinyin' // Show hanzi, select pinyin
   | 'pinyin-to-hanzi' // Show pinyin, select hanzi
   | 'english-to-hanzi' // Show english, select hanzi/pinyin
-  | 'hanzi-to-english'; // Show hanzi, select english
+  | 'hanzi-to-english' // Show hanzi, select english
+  | 'triple-match';   // Show image + english, select hanzi + pinyin (hard!)
 
 export interface Exercise {
   id: string;

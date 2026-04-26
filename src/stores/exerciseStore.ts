@@ -164,20 +164,43 @@ function generateExercises(
       case 'hanzi-to-english': {
         exercise.question = word.hanzi;
         exercise.questionData = { hanzi: word.hanzi, pinyin: word.pinyin };
-        
+
         const options: ExerciseOption[] = shuffle(enabledWords)
           .filter(w => w.id !== word.id)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.translation, isCorrect: false }));
-        
+
         const correctId = `opt-${word.id}`;
         options.push({ id: correctId, text: word.translation, isCorrect: true });
-        
+
         exercise.options = shuffle(options);
         exercise.correctAnswer = correctId;
         break;
       }
-      
+
+      case 'triple-match': {
+        exercise.question = 'Match the image and meaning';
+        exercise.questionData = {
+          imageUrl: word.imageUrl,
+          english: word.translation
+        };
+
+        // Distractors: same hanzi length for fair comparison
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+        const options: ExerciseOption[] = shuffle(sameLengthWords)
+          .slice(0, 3)
+          .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
+
+        const correctId = `opt-${word.id}`;
+        options.push({ id: correctId, text: word.hanzi, subtext: word.pinyin, isCorrect: true });
+
+        exercise.options = shuffle(options);
+        exercise.correctAnswer = correctId;
+        break;
+      }
+
       default:
         break;
     }
@@ -201,7 +224,8 @@ export const useExerciseStore = create<ExerciseState>()(
           'hanzi-to-pinyin': { completed: 0, correct: 0 },
           'pinyin-to-hanzi': { completed: 0, correct: 0 },
           'english-to-hanzi': { completed: 0, correct: 0 },
-          'hanzi-to-english': { completed: 0, correct: 0 }
+          'hanzi-to-english': { completed: 0, correct: 0 },
+          'triple-match': { completed: 0, correct: 0 }
         }
       },
 
@@ -321,7 +345,8 @@ export const useExerciseStore = create<ExerciseState>()(
               'hanzi-to-pinyin': { completed: 0, correct: 0 },
               'pinyin-to-hanzi': { completed: 0, correct: 0 },
               'english-to-hanzi': { completed: 0, correct: 0 },
-              'hanzi-to-english': { completed: 0, correct: 0 }
+              'hanzi-to-english': { completed: 0, correct: 0 },
+              'triple-match': { completed: 0, correct: 0 }
             }
           }
         });

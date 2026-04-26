@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import type { ExerciseType, ExerciseDifficulty } from '../../types/exercise';
-import { 
-  Image, 
-  Type, 
-  Languages, 
-  ArrowRightLeft, 
-  Globe, 
+import {
+  Image,
+  Type,
+  Languages,
+  ArrowRightLeft,
+  Globe,
   Brain,
   ChevronRight,
   Trophy,
-  Target
+  Target,
+  Layers
 } from 'lucide-react';
 import { useExerciseStore } from '../../stores/exerciseStore';
 
@@ -65,6 +66,14 @@ const exerciseTypes: {
     icon: Languages,
     color: 'from-indigo-500 to-purple-500',
     difficulty: 'medium'
+  },
+  {
+    type: 'triple-match',
+    title: 'Triple Match',
+    description: 'Match image + English to hanzi + pinyin (expert mode!)',
+    icon: Layers,
+    color: 'from-red-500 to-rose-600',
+    difficulty: 'hard'
   },
 ];
 
