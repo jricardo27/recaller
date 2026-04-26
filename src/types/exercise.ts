@@ -23,6 +23,11 @@ export interface Exercise {
   options: ExerciseOption[];
   correctAnswer: string;   // ID of correct option
   explanation?: string;
+  // Triple-match specific: separate hanzi and pinyin selections
+  hanziOptions?: ExerciseOption[];
+  pinyinOptions?: ExerciseOption[];
+  correctHanziAnswer?: string;
+  correctPinyinAnswer?: string;
 }
 
 export interface ExerciseOption {

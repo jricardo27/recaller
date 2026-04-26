@@ -179,25 +179,42 @@ function generateExercises(
       }
 
       case 'triple-match': {
-        exercise.question = 'Match the image and meaning';
+        exercise.question = 'Match hanzi AND pinyin';
         exercise.questionData = {
           imageUrl: word.imageUrl,
           english: word.translation
         };
 
-        // Distractors: same hanzi length for fair comparison
-        const hanziLength = word.hanzi.length;
-        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+        // Get 3 distractor words for hanzi options
+        const hanziDistractors = shuffle(enabledWords.filter(w => w.id !== word.id)).slice(0, 3);
+        const hanziOptions: ExerciseOption[] = hanziDistractors.map(w => ({
+          id: `hanzi-${w.id}`,
+          text: w.hanzi,
+          isCorrect: false
+        }));
+        hanziOptions.push({
+          id: `hanzi-${word.id}`,
+          text: word.hanzi,
+          isCorrect: true
+        });
 
-        const options: ExerciseOption[] = shuffle(sameLengthWords)
-          .slice(0, 3)
-          .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
+        // Get 3 distractor pinyins for pinyin options
+        const pinyinDistractors = shuffle(enabledWords.filter(w => w.id !== word.id)).slice(0, 3);
+        const pinyinOptions: ExerciseOption[] = pinyinDistractors.map(w => ({
+          id: `pinyin-${w.id}`,
+          text: w.pinyin,
+          isCorrect: false
+        }));
+        pinyinOptions.push({
+          id: `pinyin-${word.id}`,
+          text: word.pinyin,
+          isCorrect: true
+        });
 
-        const correctId = `opt-${word.id}`;
-        options.push({ id: correctId, text: word.hanzi, subtext: word.pinyin, isCorrect: true });
-
-        exercise.options = shuffle(options);
-        exercise.correctAnswer = correctId;
+        exercise.hanziOptions = shuffle(hanziOptions);
+        exercise.pinyinOptions = shuffle(pinyinOptions);
+        exercise.correctHanziAnswer = `hanzi-${word.id}`;
+        exercise.correctPinyinAnswer = `pinyin-${word.id}`;
         break;
       }
 

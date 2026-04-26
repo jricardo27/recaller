@@ -26,6 +26,9 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  // Triple-match: track hanzi and pinyin selections separately
+  const [selectedHanzi, setSelectedHanzi] = useState<string | null>(null);
+  const [selectedPinyin, setSelectedPinyin] = useState<string | null>(null);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const [autoContinue, setAutoContinue] = useState(() => {
@@ -97,8 +100,40 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setShowResult(true);
   };
 
+  // Triple-match: handle hanzi selection
+  const handleHanziSelect = (hanziId: string) => {
+    if (showResult) return;
+    setSelectedHanzi(hanziId);
+  };
+
+  // Triple-match: handle pinyin selection
+  const handlePinyinSelect = (pinyinId: string) => {
+    if (showResult) return;
+    setSelectedPinyin(pinyinId);
+  };
+
+  // Triple-match: submit answer when both selected
+  const handleTripleMatchAnswer = () => {
+    if (showResult || !selectedHanzi || !selectedPinyin) return;
+
+    const exercise = getCurrentExercise();
+    if (!exercise || !exercise.correctHanziAnswer || !exercise.correctPinyinAnswer) return;
+
+    const hanziCorrect = selectedHanzi === exercise.correctHanziAnswer;
+    const pinyinCorrect = selectedPinyin === exercise.correctPinyinAnswer;
+    const bothCorrect = hanziCorrect && pinyinCorrect;
+
+    setIsCorrect(bothCorrect);
+    setShowResult(true);
+
+    // Call store answer with combined result (using hanzi ID as the answer ID)
+    answerQuestion(exercise.id, selectedHanzi);
+  };
+
   const handleNext = () => {
     setSelectedOption(null);
+    setSelectedHanzi(null);
+    setSelectedPinyin(null);
     setShowResult(false);
     setIsCorrect(false);
 
@@ -307,14 +342,87 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                     <ImageIcon size={48} className="text-gray-300" />
                   </div>
                 )}
-                <p className="text-gray-500 mt-3">Select the matching hanzi + pinyin</p>
+                <p className="text-gray-500 mt-3">Select BOTH hanzi AND pinyin</p>
               </div>
             )}
           </div>
 
           {/* Options */}
           <div className="space-y-3">
-            {exercise.options.map((option) => {
+            {exercise.type === 'triple-match' && exercise.hanziOptions && exercise.pinyinOptions ? (
+              <div className="space-y-6">
+                {/* Hanzi Options */}
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-2">Select Hanzi:</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {exercise.hanziOptions.map((option) => {
+                      let buttonClass = 'p-4 rounded-xl border-2 text-center transition-all font-hanzi text-2xl ';
+
+                      if (showResult) {
+                        if (option.id === exercise.correctHanziAnswer) {
+                          buttonClass += 'border-green-500 bg-green-50 text-green-700';
+                        } else if (selectedHanzi === option.id && option.id !== exercise.correctHanziAnswer) {
+                          buttonClass += 'border-red-500 bg-red-50 text-red-700';
+                        } else {
+                          buttonClass += 'border-gray-200 bg-white text-gray-500 opacity-50';
+                        }
+                      } else {
+                        buttonClass += selectedHanzi === option.id
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50';
+                      }
+
+                      return (
+                        <button
+                          key={option.id}
+                          onClick={() => handleHanziSelect(option.id)}
+                          disabled={showResult}
+                          className={buttonClass}
+                        >
+                          {option.text}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Pinyin Options */}
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-2">Select Pinyin:</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {exercise.pinyinOptions.map((option) => {
+                      let buttonClass = 'p-3 rounded-xl border-2 text-center transition-all ';
+
+                      if (showResult) {
+                        if (option.id === exercise.correctPinyinAnswer) {
+                          buttonClass += 'border-green-500 bg-green-50 text-green-700';
+                        } else if (selectedPinyin === option.id && option.id !== exercise.correctPinyinAnswer) {
+                          buttonClass += 'border-red-500 bg-red-50 text-red-700';
+                        } else {
+                          buttonClass += 'border-gray-200 bg-white text-gray-500 opacity-50';
+                        }
+                      } else {
+                        buttonClass += selectedPinyin === option.id
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50';
+                      }
+
+                      return (
+                        <button
+                          key={option.id}
+                          onClick={() => handlePinyinSelect(option.id)}
+                          disabled={showResult}
+                          className={buttonClass}
+                        >
+                          {option.text}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              exercise.options.map((option) => {
               let buttonClass = 'w-full p-4 rounded-xl border-2 text-left transition-all ';
 
               // Only show result state if the selected option belongs to this exercise
@@ -357,7 +465,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                   </div>
                 </button>
               );
-            })}
+            }))}
           </div>
         </div>
 
@@ -372,8 +480,14 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
                 Skip
               </button>
               <button
-                onClick={() => selectedOption && handleAnswer(selectedOption)}
-                disabled={!selectedOption}
+                onClick={() => {
+                  if (exercise.type === 'triple-match') {
+                    handleTripleMatchAnswer();
+                  } else if (selectedOption) {
+                    handleAnswer(selectedOption);
+                  }
+                }}
+                disabled={exercise.type === 'triple-match' ? (!selectedHanzi || !selectedPinyin) : !selectedOption}
                 className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 Submit
@@ -392,12 +506,16 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
         </div>
 
         {/* Result feedback */}
-        {showResult && selectedOption && exercise.options.some(opt => opt.id === selectedOption) && (
+        {showResult && (
+          exercise.type === 'triple-match' || (selectedOption && exercise.options.some(opt => opt.id === selectedOption))
+        ) && (
           <div className={`mt-4 p-4 rounded-xl text-center ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {isCorrect ? (
               <div className="flex items-center justify-center gap-2">
                 <Check size={20} />
-                <span className="font-medium">Correct! Well done!</span>
+                <span className="font-medium">
+                  {exercise.type === 'triple-match' ? 'Perfect! Both hanzi and pinyin correct!' : 'Correct! Well done!'}
+                </span>
               </div>
             ) : (
               <div>
