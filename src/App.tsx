@@ -7,60 +7,11 @@ import { useWordStore } from './stores/wordStore';
 import { useExerciseStore } from './stores/exerciseStore';
 import type { WordsDatabase } from './types';
 import type { ExerciseType, ExerciseDifficulty } from './types/exercise';
-import { Play, Settings, BarChart3, BookOpen, Brain, Image, Type, ArrowRightLeft, Globe, Languages, ChevronRight, Layers } from 'lucide-react';
+import { Play, Settings, BarChart3, BookOpen, Brain, ChevronRight } from 'lucide-react';
 
 type View = 'home' | 'study' | 'words' | 'stats' | 'exercise';
 
-const exerciseTypes: {
-  type: ExerciseType;
-  title: string;
-  description: string;
-  icon: typeof Image;
-  color: string;
-}[] = [
-  {
-    type: 'image-to-hanzi',
-    title: 'Image to Word',
-    description: 'See an image, select the matching hanzi',
-    icon: Image,
-    color: 'from-purple-500 to-pink-500',
-  },
-  {
-    type: 'hanzi-to-pinyin',
-    title: 'Hanzi to Pinyin',
-    description: 'See hanzi, select the correct pinyin',
-    icon: Type,
-    color: 'from-blue-500 to-cyan-500',
-  },
-  {
-    type: 'pinyin-to-hanzi',
-    title: 'Pinyin to Hanzi',
-    description: 'Hear/see pinyin, select the matching hanzi',
-    icon: ArrowRightLeft,
-    color: 'from-green-500 to-emerald-500',
-  },
-  {
-    type: 'english-to-hanzi',
-    title: 'English to Hanzi',
-    description: 'See English, select the correct hanzi/pinyin',
-    icon: Globe,
-    color: 'from-orange-500 to-red-500',
-  },
-  {
-    type: 'hanzi-to-english',
-    title: 'Hanzi to English',
-    description: 'See hanzi, select the English meaning',
-    icon: Languages,
-    color: 'from-indigo-500 to-purple-500',
-  },
-  {
-    type: 'triple-match',
-    title: 'Triple Match',
-    description: 'Match image + English to hanzi + pinyin (expert mode!)',
-    icon: Layers,
-    color: 'from-red-500 to-rose-600',
-  },
-];
+import { exerciseTypes } from './config/exerciseTypes';
 
 function App() {
   const [view, setView] = useState<View>('home');

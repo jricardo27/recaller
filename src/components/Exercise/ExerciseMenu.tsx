@@ -1,81 +1,13 @@
 import { useState } from 'react';
 import type { ExerciseType, ExerciseDifficulty } from '../../types/exercise';
-import {
-  Image,
-  Type,
-  Languages,
-  ArrowRightLeft,
-  Globe,
-  Brain,
-  ChevronRight,
-  Trophy,
-  Target,
-  Layers
-} from 'lucide-react';
+import { ChevronRight, Trophy, Target, Brain } from 'lucide-react';
 import { useExerciseStore } from '../../stores/exerciseStore';
+import { exerciseTypes } from '../../config/exerciseTypes';
 
 interface ExerciseMenuProps {
   onSelectExercise: (type: ExerciseType, difficulty: ExerciseDifficulty) => void;
   onBack: () => void;
 }
-
-const exerciseTypes: { 
-  type: ExerciseType; 
-  title: string; 
-  description: string; 
-  icon: typeof Image;
-  color: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-}[] = [
-  {
-    type: 'image-to-hanzi',
-    title: 'Image to Word',
-    description: 'See an image, select the matching hanzi',
-    icon: Image,
-    color: 'from-purple-500 to-pink-500',
-    difficulty: 'easy'
-  },
-  {
-    type: 'hanzi-to-pinyin',
-    title: 'Hanzi to Pinyin',
-    description: 'See hanzi, select the correct pinyin (with tone tricks!)',
-    icon: Type,
-    color: 'from-blue-500 to-cyan-500',
-    difficulty: 'medium'
-  },
-  {
-    type: 'pinyin-to-hanzi',
-    title: 'Pinyin to Hanzi',
-    description: 'Hear/see pinyin, select the matching hanzi',
-    icon: ArrowRightLeft,
-    color: 'from-green-500 to-emerald-500',
-    difficulty: 'medium'
-  },
-  {
-    type: 'english-to-hanzi',
-    title: 'English to Hanzi',
-    description: 'See English, select the correct hanzi/pinyin',
-    icon: Globe,
-    color: 'from-orange-500 to-red-500',
-    difficulty: 'hard'
-  },
-  {
-    type: 'hanzi-to-english',
-    title: 'Hanzi to English',
-    description: 'See hanzi, select the English meaning',
-    icon: Languages,
-    color: 'from-indigo-500 to-purple-500',
-    difficulty: 'medium'
-  },
-  {
-    type: 'triple-match',
-    title: 'Triple Match',
-    description: 'Match image + English to hanzi + pinyin (expert mode!)',
-    icon: Layers,
-    color: 'from-red-500 to-rose-600',
-    difficulty: 'hard'
-  },
-];
 
 export function ExerciseMenu({ onSelectExercise, onBack }: ExerciseMenuProps) {
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
