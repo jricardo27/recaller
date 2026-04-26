@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useExerciseStore } from '../../stores/exerciseStore';
 import { useWordStore } from '../../stores/wordStore';
 import type { ExerciseType, ExerciseDifficulty } from '../../types/exercise';
@@ -35,7 +35,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   const [finalScore, setFinalScore] = useState<{correct: number; total: number; percentage: number; maxStreak: number; score: number} | null>(null);
 
   // Helper function to complete session - extracted to avoid duplication
-  const completeSession = () => {
+  const completeSession = useCallback(() => {
     if (session) {
       setFinalScore({
         ...getScore(),
@@ -45,7 +45,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     }
     endSession();
     setSessionComplete(true);
-  };
+  }, [session, getScore, endSession]);
 
   // Start session on mount
   useEffect(() => {
@@ -63,8 +63,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     if (session && session.currentIndex >= session.queue.length) {
       completeSession();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.currentIndex]);
+  }, [session?.currentIndex, completeSession]);
 
   // Reset state when exercise changes
   useEffect(() => {
