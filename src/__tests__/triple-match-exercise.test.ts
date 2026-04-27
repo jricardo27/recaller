@@ -92,4 +92,38 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       expect(exercise).not.toBeNull();
     }
   });
+
+  it('should record incorrect answer when hanzi is correct but pinyin is wrong (Issue #2)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    if (exercise && exercise.hanziOptions && exercise.pinyinOptions) {
+      // Select the correct hanzi
+      const correctHanziId = exercise.correctHanziAnswer!;
+      
+      // Select an incorrect pinyin
+      const incorrectPinyin = exercise.pinyinOptions.find(opt => !opt.isCorrect);
+      expect(incorrectPinyin).toBeDefined();
+      
+      // This simulates the UI logic: bothCorrect = hanziCorrect && pinyinCorrect
+      const hanziCorrect = correctHanziId === exercise.correctHanziAnswer;
+      const pinyinCorrect = incorrectPinyin!.id === exercise.correctPinyinAnswer;
+      const bothCorrect = hanziCorrect && pinyinCorrect;
+      
+      // When pinyin is wrong, bothCorrect should be false
+      expect(bothCorrect).toBe(false);
+      
+      // The fix: pass '__incorrect__' when bothCorrect is false
+      // This ensures the store records it as incorrect even though hanzi matches
+      const answerToSubmit = bothCorrect ? correctHanziId : '__incorrect__';
+      const result = currentState.answerQuestion(exercise.id, answerToSubmit);
+      
+      // Should be recorded as incorrect
+      expect(result.correct).toBe(false);
+    } else {
+      expect(exercise).not.toBeNull();
+    }
+  });
 });

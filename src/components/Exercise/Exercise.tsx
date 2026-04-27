@@ -126,8 +126,10 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setIsCorrect(bothCorrect);
     setShowResult(true);
 
-    // Call store answer with combined result (using hanzi ID as the answer ID)
-    answerQuestion(exercise.id, selectedHanzi);
+    // Call store answer with combined result
+    // Only pass the correct hanzi ID when BOTH hanzi and pinyin are correct
+    // If either is wrong, pass a dummy value so store records it as incorrect
+    answerQuestion(exercise.id, bothCorrect ? selectedHanzi : '__incorrect__');
   };
 
   const handleNext = () => {
