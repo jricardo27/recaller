@@ -126,4 +126,31 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       expect(exercise).not.toBeNull();
     }
   });
+
+  it('should use same-length hanzi distractors for Expert mode (Issue #3)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const session = currentState.session;
+    
+    expect(session).not.toBeNull();
+    
+    // Check that each exercise has same-length hanzi distractors
+    session?.queue.forEach((exercise) => {
+      if (exercise.hanziOptions) {
+        // Find the correct answer
+        const correctOption = exercise.hanziOptions.find(opt => opt.isCorrect);
+        expect(correctOption).toBeDefined();
+        
+        if (correctOption) {
+          const correctHanziLength = correctOption.text.length;
+          
+          // All distractors should have same length as correct answer
+          exercise.hanziOptions.forEach((option) => {
+            expect(option.text.length).toBe(correctHanziLength);
+          });
+        }
+      }
+    });
+  });
 });
