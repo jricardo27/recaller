@@ -204,22 +204,54 @@ function generateToneVariations(correctPinyin: string): string[] {
   fullVariations.push(correctPinyin);
   usedCombinations.add(uniqueBases.map(b => getCorrectToneForBase(b)).join(','));
 
-  // Generate 3 distractors
-  for (let i = 1; i <= 3 && fullVariations.length < 4; i++) {
-    const baseToVary = uniqueBases[(i - 1) % uniqueBases.length];
+  // Generate 3 distractors with retry logic for duplicates
+  let distractorsGenerated = 0;
+  let attempts = 0;
+  const maxAttempts = 50;
+
+  while (distractorsGenerated < 3 && attempts < maxAttempts) {
+    attempts++;
+
+    // Cycle through which base to vary
+    const baseToVary = uniqueBases[distractorsGenerated % uniqueBases.length];
     const correctTone = getCorrectToneForBase(baseToVary);
 
     // Generate new tone for this base
     let newTone: number;
-    if (i <= 2) {
-      newTone = (correctTone + i) % 5;
+    if (distractorsGenerated === 0) {
+      // First distractor: use next tone
+      newTone = (correctTone + 1) % 5;
+    } else if (distractorsGenerated === 1 && uniqueBases.length > 1) {
+      // Second distractor: use second next tone (prefer varying different base)
+      newTone = (correctTone + 2) % 5;
     } else {
-      do { newTone = Math.floor(Math.random() * 5); } while (newTone === correctTone);
+      // Try random tones until we find an unused one
+      const usedTones = new Set<number>();
+      usedTones.add(correctTone); // exclude the correct tone
+
+      // Find already used tones for this base
+      for (const key of usedCombinations) {
+        const tones = key.split(',').map(Number);
+        const baseIndex = uniqueBases.indexOf(baseToVary);
+        if (baseIndex >= 0 && baseIndex < tones.length) {
+          usedTones.add(tones[baseIndex]);
+        }
+      }
+
+      // Find an unused tone
+      const availableTones = [0, 1, 2, 3, 4].filter(t => !usedTones.has(t));
+      if (availableTones.length === 0) {
+        // All tones used for this base, try varying a different base
+        continue;
+      }
+      newTone = availableTones[Math.floor(Math.random() * availableTones.length)];
     }
 
     // Build combination key
     const comboKey = uniqueBases.map(b => b === baseToVary ? newTone : getCorrectToneForBase(b)).join(',');
-    if (usedCombinations.has(comboKey)) continue;
+    if (usedCombinations.has(comboKey)) {
+      continue; // Try again with different parameters
+    }
 
     // Generate the variation
     const newPinyin = syllables.map(syl => {
@@ -231,6 +263,7 @@ function generateToneVariations(correctPinyin: string): string[] {
 
     fullVariations.push(newPinyin);
     usedCombinations.add(comboKey);
+    distractorsGenerated++;
   }
 
   // Fill remaining slots if needed

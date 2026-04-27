@@ -7,7 +7,17 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: [
+          'Noto Sans SC',      // Primary: Excellent for Chinese with clear tone marks
+          'PingFang SC',       // macOS/iOS Chinese
+          'Microsoft YaHei',   // Windows Chinese
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'sans-serif'
+        ],
+        serif: ['Noto Serif SC', 'Songti SC', 'STSong', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
