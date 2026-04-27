@@ -44,6 +44,131 @@ function shuffle<T>(array: T[]): T[] {
   return newArray;
 }
 
+// Helper: Generate tone variations of a pinyin
+// Returns an array of 4 pinyin strings (3 wrong tone variations + correct one)
+function generateToneVariations(correctPinyin: string): string[] {
+  // Map of vowels with different tones
+  const toneMap: Record<string, string[]> = {
+    'a': ['ā', 'á', 'ǎ', 'à', 'a'],
+    'e': ['ē', 'é', 'ě', 'è', 'e'],
+    'i': ['ī', 'í', 'ǐ', 'ì', 'i'],
+    'o': ['ō', 'ó', 'ǒ', 'ò', 'o'],
+    'u': ['ū', 'ú', 'ǔ', 'ù', 'u'],
+    'ü': ['ǖ', 'ǘ', 'ǚ', 'ǜ', 'ü'],
+    'A': ['Ā', 'Á', 'Ǎ', 'À', 'A'],
+    'E': ['Ē', 'É', 'Ě', 'È', 'E'],
+    'I': ['Ī', 'Í', 'Ǐ', 'Ì', 'I'],
+    'O': ['Ō', 'Ó', 'Ǒ', 'Ò', 'O'],
+    'U': ['Ū', 'Ú', 'Ǔ', 'Ù', 'U'],
+    'Ü': ['Ǖ', 'Ǘ', 'Ǚ', 'Ǜ', 'Ü']
+  };
+
+  // Find the vowel that carries the tone (priority: a, e, o, then last vowel)
+  const findVowelWithTone = (pinyin: string): { vowel: string; index: number } | null => {
+    // Priority order for tone placement: a > e > o
+    // Check for both toned and base vowels
+    const priorityVowels = ['a', 'e', 'o', 'A', 'E', 'O'];
+    const tonedPriorityVowels = ['ā', 'á', 'ǎ', 'à', 'Ā', 'Á', 'Ǎ', 'À', 'ē', 'é', 'ě', 'è', 'Ē', 'É', 'Ě', 'È', 'ō', 'ó', 'ǒ', 'ò', 'Ō', 'Ó', 'Ǒ', 'Ò'];
+
+    // First check for toned priority vowels (they indicate where tone is)
+    for (let i = 0; i < pinyin.length; i++) {
+      const char = pinyin[i];
+      if (tonedPriorityVowels.includes(char)) {
+        // Find the corresponding base vowel
+        const baseVowel = priorityVowels.find(v => toneMap[v]?.includes(char));
+        if (baseVowel) {
+          return { vowel: baseVowel, index: i };
+        }
+      }
+    }
+
+    // Then check for base priority vowels
+    for (const v of priorityVowels) {
+      const idx = pinyin.indexOf(v);
+      if (idx !== -1) {
+        return { vowel: v, index: idx };
+      }
+    }
+
+    // Check for toned i, u, ü
+    const tonedOtherVowels = ['ī', 'í', 'ǐ', 'ì', 'Ī', 'Í', 'Ǐ', 'Ì', 'ū', 'ú', 'ǔ', 'ù', 'Ū', 'Ú', 'Ǔ', 'Ù', 'ǖ', 'ǘ', 'ǚ', 'ǜ', 'Ǖ', 'Ǘ', 'Ǚ', 'Ǜ'];
+    for (let i = pinyin.length - 1; i >= 0; i--) {
+      const char = pinyin[i];
+      if (tonedOtherVowels.includes(char)) {
+        const baseVowel = ['i', 'u', 'ü', 'I', 'U', 'Ü'].find(v => toneMap[v]?.includes(char));
+        if (baseVowel) {
+          return { vowel: baseVowel, index: i };
+        }
+      }
+    }
+
+    // Check for base i, u, ü (tone goes on last vowel for iu, ui combinations)
+    const otherVowels = ['i', 'u', 'ü', 'I', 'U', 'Ü'];
+    let lastVowelIndex = -1;
+    let lastVowel = '';
+    for (const v of otherVowels) {
+      const idx = pinyin.lastIndexOf(v);
+      if (idx > lastVowelIndex) {
+        lastVowelIndex = idx;
+        lastVowel = v;
+      }
+    }
+    if (lastVowelIndex !== -1) {
+      return { vowel: lastVowel, index: lastVowelIndex };
+    }
+    return null;
+  };
+
+  // Extract base pinyin (remove tone)
+  const extractBase = (pinyin: string): string => {
+    let base = pinyin;
+    // Replace all toned vowels with base vowels
+    for (const [baseVowel, tonedVowels] of Object.entries(toneMap)) {
+      for (const toned of tonedVowels.slice(0, 4)) {
+        base = base.replace(new RegExp(toned, 'g'), baseVowel);
+      }
+    }
+    return base;
+  };
+
+  const vowelInfo = findVowelWithTone(correctPinyin);
+  if (!vowelInfo) {
+    // If no vowel found, return the pinyin with slight modifications
+    return shuffle([correctPinyin, correctPinyin + '1', correctPinyin + '2', correctPinyin + '3'].slice(0, 4));
+  }
+
+  const basePinyin = extractBase(correctPinyin);
+  const { vowel, index } = vowelInfo;
+  const lowercaseVowel = vowel.toLowerCase();
+  const tones = toneMap[lowercaseVowel] || toneMap[vowel];
+
+  // Get the current tone index (0-4 for first through neutral)
+  let currentToneIndex = 4; // default to neutral
+  const tonedVowel = correctPinyin[index];
+  if (tones) {
+    const toneIdx = tones.indexOf(tonedVowel);
+    if (toneIdx !== -1) {
+      currentToneIndex = toneIdx;
+    }
+  }
+
+  // Generate all tone variations except the current one
+  const variations: string[] = [];
+  for (let i = 0; i < 5; i++) {
+    if (i !== currentToneIndex && tones) {
+      const newVowel = lowercaseVowel === vowel ? tones[i] : tones[i].toUpperCase();
+      const variation = basePinyin.slice(0, index) + newVowel + basePinyin.slice(index + 1);
+      variations.push(variation);
+    }
+  }
+
+  // Select 3 random variations
+  const selectedDistractors = shuffle(variations).slice(0, 3);
+
+  // Add the correct one and shuffle
+  return shuffle([...selectedDistractors, correctPinyin]);
+}
+
 // Generate distractor pinyin options with tone variations
 function generatePinyinDistractors(correctPinyin: string, allWords: Word[]): string[] {
   // Get unique pinyin values (excluding the correct one) using Set for efficiency
@@ -99,7 +224,6 @@ function createHanziOptions(
 function generateExercises(
   type: ExerciseType,
   words: Word[],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _difficulty: ExerciseDifficulty
 ): Exercise[] {
   const enabledWords = words.filter(w => w.enabled);
@@ -204,8 +328,13 @@ function generateExercises(
           isCorrect: true
         });
 
-        // Get pinyin options using helper for tone variation distractors (Expert mode)
-        const pinyinStrings = generatePinyinDistractors(word.pinyin, enabledWords);
+        // Get pinyin options based on difficulty
+        // 'hard' difficulty uses tone variations (same pinyin, different tones)
+        // other difficulties use random pinyin from other words
+        const pinyinStrings = _difficulty === 'hard'
+          ? generateToneVariations(word.pinyin)
+          : generatePinyinDistractors(word.pinyin, enabledWords);
+
         const pinyinOptions: ExerciseOption[] = pinyinStrings.map((pinyin, index) => ({
           id: `pinyin-${index}-${pinyin}`,
           text: pinyin,

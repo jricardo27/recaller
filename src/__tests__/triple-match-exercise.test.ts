@@ -376,4 +376,78 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       expect(finalState.stats.byType['triple-match'].completed).toBeGreaterThan(0);
     }
   });
+
+  it('should generate tone variations for pinyin in hard difficulty mode', () => {
+    // Use words with clear tone marks
+    const toneWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', toneWords, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Check that pinyin options in hard mode are tone variations
+    const exercise = session!.queue[0];
+    expect(exercise.pinyinOptions).toBeDefined();
+    expect(exercise.pinyinOptions!.length).toBe(4);
+
+    // Extract the base pinyin (without tone) from each option
+    const extractBase = (pinyin: string): string => {
+      return pinyin
+        .replace(/[āáǎà]/g, 'a')
+        .replace(/[ēéěè]/g, 'e')
+        .replace(/[īíǐì]/g, 'i')
+        .replace(/[ōóǒò]/g, 'o')
+        .replace(/[ūúǔù]/g, 'u')
+        .replace(/[ǖǘǚǜ]/g, 'ü');
+    };
+
+    const bases = exercise.pinyinOptions!.map(opt => extractBase(opt.text));
+
+    // All options should have the same base (same letters, just different tones)
+    const firstBase = bases[0];
+    bases.forEach(base => {
+      expect(base).toBe(firstBase);
+    });
+
+    // Should have exactly one correct answer
+    const correctCount = exercise.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+  });
+
+  it('should use random pinyin distractors in medium difficulty (not tone variations)', () => {
+    const toneWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', toneWords, 'medium');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Check that pinyin options in medium mode are from different words
+    const exercise = session!.queue[0];
+    expect(exercise.pinyinOptions).toBeDefined();
+    expect(exercise.pinyinOptions!.length).toBe(4);
+
+    // Extract unique pinyin values
+    const uniquePinyin = new Set(exercise.pinyinOptions!.map(opt => opt.text));
+
+    // Should have 4 different pinyin options (from different words)
+    expect(uniquePinyin.size).toBe(4);
+
+    // Should have exactly one correct answer
+    const correctCount = exercise.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+  });
 });
