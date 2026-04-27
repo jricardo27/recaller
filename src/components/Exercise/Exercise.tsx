@@ -139,7 +139,9 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setShowResult(false);
     setIsCorrect(false);
 
-    if (session && session.currentIndex >= session.queue.length - 1) {
+    // Get fresh session from store to avoid stale closure issues
+    const currentSession = useExerciseStore.getState().session;
+    if (currentSession && currentSession.currentIndex >= currentSession.queue.length - 1) {
       completeSession();
     } else {
       nextQuestion();

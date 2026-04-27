@@ -184,4 +184,41 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       }
     });
   });
+
+  it('should complete session when answering the last question (Bug Fix)', () => {
+    // Use exactly the mockWords array (5 words), queue will have min(10, 5) = 5 questions
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const queueLength = currentState.session?.queue.length || 0;
+    
+    // Answer all questions except the last one
+    for (let i = 0; i < queueLength - 1; i++) {
+      const exercise = currentState.getCurrentExercise();
+      if (exercise) {
+        currentState.answerQuestion(exercise.id, exercise.correctHanziAnswer!);
+        currentState.nextQuestion();
+      }
+    }
+    
+    // Now we're at the last question
+    const lastExercise = currentState.getCurrentExercise();
+    expect(lastExercise).not.toBeNull();
+    expect(currentState.session?.currentIndex).toBe(queueLength - 1);
+    
+    if (lastExercise) {
+      // Answer the last question
+      currentState.answerQuestion(lastExercise.id, lastExercise.correctHanziAnswer!);
+      
+      // Move to next (which should trigger completion check in UI)
+      currentState.nextQuestion();
+      
+      // After nextQuestion on last item, currentIndex should equal queue.length
+      const finalState = useExerciseStore.getState();
+      expect(finalState.session?.currentIndex).toBe(queueLength);
+      
+      // Verify getCurrentExercise returns null (session effectively complete)
+      expect(finalState.getCurrentExercise()).toBeNull();
+    }
+  });
 });
