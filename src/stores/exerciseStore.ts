@@ -135,11 +135,26 @@ function generateToneVariations(correctPinyin: string): string[] {
     return base;
   };
 
-  // Generate tone variations for each part
-  const generateVariationsForPart = (part: string): string[] => {
+  // Get the current tone index for a specific vowel in a part
+  const getCurrentToneIndex = (part: string, vowelInfo: { vowel: string; index: number }): number => {
+    const { vowel, index } = vowelInfo;
+    const lowercaseVowel = vowel.toLowerCase();
+    const tones = toneMap[lowercaseVowel] || toneMap[vowel];
+    const tonedVowel = part[index];
+    if (tones) {
+      const toneIdx = tones.indexOf(tonedVowel);
+      if (toneIdx !== -1) {
+        return toneIdx;
+      }
+    }
+    return 4; // default to neutral
+  };
+
+  // Generate a specific tone variation for a part
+  const generateVariationForPart = (part: string, toneIndex: number): string => {
     const vowelInfo = findVowelWithTone(part);
     if (!vowelInfo) {
-      return [part];
+      return part;
     }
 
     const basePinyin = extractBase(part);
@@ -147,50 +162,84 @@ function generateToneVariations(correctPinyin: string): string[] {
     const lowercaseVowel = vowel.toLowerCase();
     const tones = toneMap[lowercaseVowel] || toneMap[vowel];
 
-    // Generate all tone variations for this part (all 5 tones)
-    const variations: string[] = [];
-    for (let i = 0; i < 5; i++) {
-      if (tones) {
-        const newVowel = lowercaseVowel === vowel ? tones[i] : tones[i].toUpperCase();
-        const variation = basePinyin.slice(0, index) + newVowel + basePinyin.slice(index + 1);
-        variations.push(variation);
-      }
+    if (tones && toneIndex >= 0 && toneIndex < 5) {
+      const newVowel = lowercaseVowel === vowel ? tones[toneIndex] : tones[toneIndex].toUpperCase();
+      return basePinyin.slice(0, index) + newVowel + basePinyin.slice(index + 1);
     }
-    return variations;
+    return part;
   };
 
-  // Generate variations for all parts
-  const partVariations: string[][] = pinyinParts.map(generateVariationsForPart);
+  // Get the correct tone indices for each part
+  const correctToneIndices: (number | null)[] = pinyinParts.map(part => {
+    const vowelInfo = findVowelWithTone(part);
+    return vowelInfo ? getCurrentToneIndex(part, vowelInfo) : null;
+  });
 
-  // If we couldn't generate variations for any part, fallback
-  if (partVariations.length === 0 || partVariations.every(v => v.length === 0)) {
-    return shuffle([correctPinyin, correctPinyin + '1', correctPinyin + '2', correctPinyin + '3'].slice(0, 4));
-  }
-
-  // Create 4 complete pinyin variations by combining parts
-  // Use indices 0, 1, 2, 3 to get different tone combinations across all parts
+  // Generate 4 unique variations with different tone combinations
   const fullVariations: string[] = [];
-  for (let variationIdx = 0; variationIdx < 4; variationIdx++) {
-    const combinedParts = partVariations.map((partVarList, partIdx) => {
-      // Cycle through available variations for each part
-      const varIndex = (variationIdx + partIdx) % partVarList.length;
-      return partVarList[varIndex];
+  const usedCombinations = new Set<string>();
+
+  // Always include the correct answer first
+  fullVariations.push(correctPinyin);
+  usedCombinations.add(correctToneIndices.join(','));
+
+  // Generate 3 distractors with different tone combinations
+  const maxAttempts = 20;
+  let attempts = 0;
+
+  while (fullVariations.length < 4 && attempts < maxAttempts) {
+    attempts++;
+
+    // Generate a new tone combination
+    const newToneIndices = correctToneIndices.map((correctIdx, partIdx) => {
+      if (correctIdx === null) {
+        return null; // No tone variation possible for this part
+      }
+
+      // For the first distractor, change the first part's tone
+      // For the second, change the second part's tone (if exists)
+      // For the third, change a random part's tone
+      let newIdx: number;
+      if (fullVariations.length === 1 && partIdx === 0) {
+        // First distractor: change first part (use next tone)
+        newIdx = (correctIdx + 1) % 5;
+      } else if (fullVariations.length === 2 && partIdx === 1 && pinyinParts.length > 1) {
+        // Second distractor: change second part if exists
+        newIdx = (correctIdx + 1) % 5;
+      } else {
+        // Random different tone
+        do {
+          newIdx = Math.floor(Math.random() * 5);
+        } while (newIdx === correctIdx);
+      }
+      return newIdx;
     });
-    fullVariations.push(combinedParts.join(' / '));
+
+    const combinationKey = newToneIndices.join(',');
+    if (usedCombinations.has(combinationKey)) {
+      continue; // Skip if this combination already exists
+    }
+
+    // Generate the full pinyin with new tones
+    const newParts = pinyinParts.map((part, idx) => {
+      const toneIdx = newToneIndices[idx];
+      if (toneIdx === null) {
+        return part;
+      }
+      return generateVariationForPart(part, toneIdx);
+    });
+
+    const newFullPinyin = newParts.join(' / ');
+    fullVariations.push(newFullPinyin);
+    usedCombinations.add(combinationKey);
   }
 
-  // Find which variation matches the correct pinyin (keeping original format)
-  const correctIndex = fullVariations.findIndex(v =>
-    v.replace(/\s*\/\s*/g, '/').trim() === correctPinyin.replace(/\s*\/\s*/g, '/').trim()
-  );
-
-  // If correct pinyin not found in variations, replace one randomly
-  if (correctIndex === -1 && fullVariations.length > 0) {
-    const randomReplaceIdx = Math.floor(Math.random() * fullVariations.length);
-    fullVariations[randomReplaceIdx] = correctPinyin;
+  // If we couldn't generate enough unique variations, fill with fallback
+  while (fullVariations.length < 4) {
+    fullVariations.push(correctPinyin + ` (${fullVariations.length})`);
   }
 
-  // Return shuffled array with 4 unique variations
+  // Return shuffled array
   return shuffle(fullVariations.slice(0, 4));
 }
 
