@@ -200,23 +200,19 @@ function generateExercises(
           isCorrect: true
         });
 
-        // Get 3 distractor pinyins for pinyin options
-        const pinyinDistractors = shuffle(enabledWords.filter(w => w.id !== word.id)).slice(0, 3);
-        const pinyinOptions: ExerciseOption[] = pinyinDistractors.map(w => ({
-          id: `pinyin-${w.id}`,
-          text: w.pinyin,
-          isCorrect: false
+        // Get pinyin options using helper for tone variation distractors (Expert mode)
+        const pinyinStrings = generatePinyinDistractors(word.pinyin, enabledWords);
+        const pinyinOptions: ExerciseOption[] = pinyinStrings.map((pinyin, index) => ({
+          id: `pinyin-${index}-${pinyin}`,
+          text: pinyin,
+          isCorrect: pinyin === word.pinyin
         }));
-        pinyinOptions.push({
-          id: `pinyin-${word.id}`,
-          text: word.pinyin,
-          isCorrect: true
-        });
 
         exercise.hanziOptions = shuffle(hanziOptions);
         exercise.pinyinOptions = shuffle(pinyinOptions);
         exercise.correctHanziAnswer = "hanzi-" + word.id;
-        exercise.correctPinyinAnswer = "pinyin-" + word.id;
+        // Find the correct pinyin option ID
+        exercise.correctPinyinAnswer = pinyinOptions.find(opt => opt.isCorrect)?.id || '';
         exercise.correctAnswer = "hanzi-" + word.id;
         break;
       }

@@ -153,4 +153,35 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       }
     });
   });
+
+  it('should use generatePinyinDistractors helper for pinyin options (Issue #4)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const session = currentState.session;
+    
+    expect(session).not.toBeNull();
+    
+    // Check that each exercise has pinyin options with correct structure
+    session?.queue.forEach((exercise) => {
+      if (exercise.pinyinOptions) {
+        // Should have 3 pinyin options (2 distractors + 1 correct)
+        expect(exercise.pinyinOptions.length).toBe(3);
+        
+        // Find the correct pinyin option
+        const correctOption = exercise.pinyinOptions.find(opt => opt.isCorrect);
+        expect(correctOption).toBeDefined();
+        expect(correctOption?.id).toMatch(/^pinyin-\d+-/);
+        
+        // All options should have the new ID format
+        exercise.pinyinOptions.forEach((option) => {
+          expect(option.id).toMatch(/^pinyin-\d+-/);
+          expect(option.text).toBeDefined();
+        });
+        
+        // correctPinyinAnswer should match the correct option's ID
+        expect(exercise.correctPinyinAnswer).toBe(correctOption?.id);
+      }
+    });
+  });
 });
