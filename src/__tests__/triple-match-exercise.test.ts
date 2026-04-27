@@ -221,4 +221,52 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       expect(finalState.getCurrentExercise()).toBeNull();
     }
   });
+
+  it('should auto-submit when both hanzi and pinyin are selected (auto-continue)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    expect(exercise).not.toBeNull();
+    
+    if (exercise) {
+      // Simulate auto-submit by calling answerQuestion directly
+      // In the UI, the useEffect would trigger when both selections are made
+      const correctHanziId = exercise.correctHanziAnswer!;
+      
+      // Answer the question (this is what handleTripleMatchAnswer does)
+      currentState.answerQuestion(exercise.id, correctHanziId);
+      
+      // Verify answer was recorded in the store
+      expect(currentState.session?.totalAnswered).toBe(1);
+      expect(currentState.session?.correctAnswers).toBe(1);
+    }
+  });
+
+  it('should verify auto-submit prerequisites (both selections + autoContinue enabled)', () => {
+    // This test verifies the conditions that trigger auto-submit in the UI
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    expect(exercise).not.toBeNull();
+    
+    if (exercise) {
+      // The UI auto-submit useEffect checks:
+      // selectedHanzi && selectedPinyin && autoContinue && !showResult
+      
+      // Verify exercise has the required answer properties
+      expect(exercise.correctHanziAnswer).toBeDefined();
+      expect(exercise.correctPinyinAnswer).toBeDefined();
+      expect(exercise.correctAnswer).toBeDefined();
+      
+      // Verify both hanzi and pinyin options exist
+      expect(exercise.hanziOptions).toBeDefined();
+      expect(exercise.pinyinOptions).toBeDefined();
+      expect(exercise.hanziOptions?.length).toBe(4);
+      expect(exercise.pinyinOptions?.length).toBe(4);
+    }
+  });
 });

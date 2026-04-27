@@ -82,17 +82,11 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
 
   // Auto-continue when result is shown
   useEffect(() => {
-    console.log('[AutoContinue] showResult:', showResult, 'autoContinue:', autoContinue);
     if (showResult && autoContinue) {
-      console.log('[AutoContinue] Starting timer');
       const timer = setTimeout(() => {
-        console.log('[AutoContinue] Timer fired, calling handleNext');
         handleNextRef.current();
       }, 1500); // 1.5 second delay
-      return () => {
-        console.log('[AutoContinue] Clearing timer');
-        clearTimeout(timer);
-      };
+      return () => clearTimeout(timer);
     }
   }, [showResult, autoContinue]);
 
@@ -119,25 +113,15 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
 
   // Triple-match: submit answer when both selected
   const handleTripleMatchAnswer = useCallback(() => {
-    console.log('[TripleMatch] handleTripleMatchAnswer called');
-    console.log('[TripleMatch] showResult:', showResult, 'selectedHanzi:', selectedHanzi, 'selectedPinyin:', selectedPinyin);
-    
-    if (showResult || !selectedHanzi || !selectedPinyin) {
-      console.log('[TripleMatch] Early return - showResult:', showResult, '!selectedHanzi:', !selectedHanzi, '!selectedPinyin:', !selectedPinyin);
-      return;
-    }
+    if (showResult || !selectedHanzi || !selectedPinyin) return;
 
     const exercise = getCurrentExercise();
-    console.log('[TripleMatch] exercise:', exercise?.id, 'correctHanzi:', exercise?.correctHanziAnswer, 'correctPinyin:', exercise?.correctPinyinAnswer);
-    
     if (!exercise || !exercise.correctHanziAnswer || !exercise.correctPinyinAnswer) return;
 
     const hanziCorrect = selectedHanzi === exercise.correctHanziAnswer;
     const pinyinCorrect = selectedPinyin === exercise.correctPinyinAnswer;
     const bothCorrect = hanziCorrect && pinyinCorrect;
-    console.log('[TripleMatch] hanziCorrect:', hanziCorrect, 'pinyinCorrect:', pinyinCorrect, 'bothCorrect:', bothCorrect);
 
-    console.log('[TripleMatch] Setting showResult to true');
     setIsCorrect(bothCorrect);
     setShowResult(true);
 
@@ -145,14 +129,11 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     // Only pass the correct hanzi ID when BOTH hanzi and pinyin are correct
     // If either is wrong, pass a dummy value so store records it as incorrect
     answerQuestion(exercise.id, bothCorrect ? selectedHanzi : '__incorrect__');
-    console.log('[TripleMatch] answerQuestion called');
   }, [showResult, selectedHanzi, selectedPinyin, getCurrentExercise, answerQuestion]);
 
   // Auto-submit for triple-match when both selections are made
   useEffect(() => {
-    console.log('[AutoSubmit] selectedHanzi:', selectedHanzi, 'selectedPinyin:', selectedPinyin, 'autoContinue:', autoContinue, 'showResult:', showResult);
     if (selectedHanzi && selectedPinyin && autoContinue && !showResult) {
-      console.log('[AutoSubmit] Both selected, auto-submitting');
       handleTripleMatchAnswer();
     }
   }, [selectedHanzi, selectedPinyin, autoContinue, showResult, handleTripleMatchAnswer]);
