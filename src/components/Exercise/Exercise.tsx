@@ -138,21 +138,20 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     }
   }, [selectedHanzi, selectedPinyin, autoContinue, showResult, handleTripleMatchAnswer]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setSelectedOption(null);
     setSelectedHanzi(null);
     setSelectedPinyin(null);
     setShowResult(false);
     setIsCorrect(false);
 
-    // Get fresh session from store to avoid stale closure issues
-    const currentSession = useExerciseStore.getState().session;
-    if (currentSession && currentSession.currentIndex >= currentSession.queue.length - 1) {
+    // Use reactive session variable instead of getState()
+    if (session && session.currentIndex >= session.queue.length - 1) {
       completeSession();
     } else {
       nextQuestion();
     }
-  };
+  }, [session, completeSession, nextQuestion]);
 
   // Ref to always call latest handleNext in effects
   const handleNextRef = useRef(handleNext);
