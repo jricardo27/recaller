@@ -500,4 +500,48 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
     const correctOption = exercise!.pinyinOptions!.find(opt => opt.isCorrect);
     expect(correctOption!.text).toBe('yǒu / méi yǒu');
   });
+
+  it('should maintain consistent tone changes for identical syllables in multi-part pinyin (Bug Fix)', () => {
+    // Test with pinyin containing the same syllable multiple times
+    // When the syllable "yǒu" appears twice, both instances should get the same tone change
+    const wordsWithRepeatedSyllable: Word[] = [
+      { id: 1, hanzi: '有', pinyin: 'yǒu / méi yǒu', translation: 'have/not have', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', wordsWithRepeatedSyllable, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.pinyinOptions).toBeDefined();
+
+    // For each option, check that "yǒu" syllables have consistent tones
+    exercise!.pinyinOptions!.forEach(opt => {
+      const parts = opt.text.split(' / ');
+      if (parts.length === 2) {
+        // Extract just the first syllable from each part
+        // Second part is "méi yǒu" - extract the last word (yǒu)
+        const firstSyllable = parts[0].trim();
+        const secondPartWords = parts[1].trim().split(/\s+/);
+        const secondSyllable = secondPartWords[secondPartWords.length - 1];
+
+        // Both "yǒu" instances should be identical (same tone)
+        expect(firstSyllable).toBe(secondSyllable);
+      }
+    });
+
+    // All options should be unique
+    const uniqueOptions = new Set(exercise!.pinyinOptions!.map(opt => opt.text));
+    expect(uniqueOptions.size).toBe(4);
+
+    // Should have exactly one correct answer
+    const correctCount = exercise!.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+  });
 });
