@@ -269,4 +269,33 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       expect(exercise.pinyinOptions?.length).toBe(4);
     }
   });
+
+  it('should generate unique pinyin distractors without duplicates (Issue #4 & #5)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const session = currentState.session;
+    
+    expect(session).not.toBeNull();
+    
+    // Check all exercises for unique pinyin options
+    session?.queue.forEach((exercise) => {
+      if (exercise.pinyinOptions) {
+        // Extract just the pinyin text values
+        const pinyinTexts = exercise.pinyinOptions.map(opt => opt.text);
+        
+        // Verify all pinyin options are unique (no duplicates)
+        const uniquePinyin = new Set(pinyinTexts);
+        expect(uniquePinyin.size).toBe(pinyinTexts.length);
+        
+        // Should have exactly one correct answer
+        const correctCount = exercise.pinyinOptions.filter(opt => opt.isCorrect).length;
+        expect(correctCount).toBe(1);
+        
+        // The correct answer text should match one of the options
+        const correctOption = exercise.pinyinOptions.find(opt => opt.isCorrect);
+        expect(correctOption?.text).toBeDefined();
+      }
+    });
+  });
 });

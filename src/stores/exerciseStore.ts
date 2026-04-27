@@ -46,21 +46,24 @@ function shuffle<T>(array: T[]): T[] {
 
 // Generate distractor pinyin options with tone variations
 function generatePinyinDistractors(correctPinyin: string, allWords: Word[]): string[] {
-  const distractors: string[] = [];
+  // Get unique pinyin values (excluding the correct one) using Set for efficiency
+  const uniquePinyin = new Set(
+    allWords.map(w => w.pinyin).filter((p): p is string => !!p && p !== correctPinyin)
+  );
   
-  // Get other pinyin from words (3 distractors for consistency with hanzi options)
-  // Shuffle first to get random distractors, not always the first 3 in the array
-  const otherPinyin = shuffle(allWords)
-    .map(w => w.pinyin)
-    .filter(p => p && p !== correctPinyin && !distractors.includes(p))
-    .slice(0, 3);
+  // Convert to array and pick 3 random distractors without shuffling entire array
+  const candidates = Array.from(uniquePinyin);
+  const selectedDistractors: string[] = [];
   
-  distractors.push(...otherPinyin);
+  while (selectedDistractors.length < 3 && candidates.length > 0) {
+    const randomIndex = Math.floor(Math.random() * candidates.length);
+    selectedDistractors.push(candidates[randomIndex]);
+    // Remove selected candidate to avoid duplicates
+    candidates.splice(randomIndex, 1);
+  }
   
-  // Add the correct one
-  distractors.push(correctPinyin);
-  
-  return shuffle(distractors);
+  // Add the correct one and shuffle final result
+  return shuffle([...selectedDistractors, correctPinyin]);
 }
 
 // Helper: Create hanzi options with same-length distractors
