@@ -426,10 +426,18 @@ function generateExercises(
           english: word.translation
         };
 
-        // Get 3 distractor words for hanzi options (same-length for Expert mode)
+        // Get 3 distractor words for hanzi options (same-length for Expert mode, with fallback)
         const hanziLength = word.hanzi.length;
         const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
-        const hanziDistractors = shuffle(sameLengthWords).slice(0, 3);
+        let hanziDistractors = shuffle(sameLengthWords).slice(0, 3);
+
+        // Fallback: if not enough same-length words, add other words of different lengths
+        if (hanziDistractors.length < 3) {
+          const otherWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length !== hanziLength);
+          const additionalDistractors = shuffle(otherWords).slice(0, 3 - hanziDistractors.length);
+          hanziDistractors = [...hanziDistractors, ...additionalDistractors];
+        }
+
         const hanziOptions: ExerciseOption[] = hanziDistractors.map(w => ({
           id: `hanzi-${w.id}`,
           text: w.hanzi,

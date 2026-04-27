@@ -581,4 +581,44 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
     const uniqueHanzi = new Set(exercise!.options.map(opt => opt.text));
     expect(uniqueHanzi.size).toBe(4);
   });
+
+  it('should fallback to different-length words in triple-match when insufficient same-length distractors (Issue #8)', () => {
+    // Database with only 1 other word of same length as target
+    const limitedSameLengthWords: Word[] = [
+      { id: 1, hanzi: '再见', pinyin: 'zài jiàn', translation: 'goodbye', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '你好', pinyin: 'nǐ hǎo', translation: 'hello', imageUrl: '/images/2.png', enabled: true }, // Same length
+      { id: 3, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/3.png', enabled: true }, // Different length
+      { id: 4, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/4.png', enabled: true }, // Different length
+      { id: 5, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/5.png', enabled: true }, // Different length
+    ];
+
+    store.startSession('triple-match', limitedSameLengthWords, 'medium');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Find an exercise for the 2-character word
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.hanziOptions).toBeDefined();
+
+    // Should have exactly 4 hanzi options (1 correct + 3 distractors)
+    expect(exercise!.hanziOptions!.length).toBe(4);
+
+    // Should have exactly 1 correct hanzi option
+    const correctHanziOptions = exercise!.hanziOptions!.filter(opt => opt.isCorrect);
+    expect(correctHanziOptions.length).toBe(1);
+
+    // Should have exactly 3 distractor hanzi options
+    const distractorHanziOptions = exercise!.hanziOptions!.filter(opt => !opt.isCorrect);
+    expect(distractorHanziOptions.length).toBe(3);
+
+    // All hanzi options should have unique text
+    const uniqueHanzi = new Set(exercise!.hanziOptions!.map(opt => opt.text));
+    expect(uniqueHanzi.size).toBe(4);
+
+    // The correct answer should be '再见' (word id 1)
+    expect(correctHanziOptions[0].text).toBe('再见');
+  });
 });
