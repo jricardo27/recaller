@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useExerciseStore } from '../../stores/exerciseStore';
 import { useWordStore } from '../../stores/wordStore';
 import type { ExerciseType, ExerciseDifficulty } from '../../types/exercise';
@@ -84,11 +84,10 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   useEffect(() => {
     if (showResult && autoContinue) {
       const timer = setTimeout(() => {
-        handleNext();
+        handleNextRef.current();
       }, 1500); // 1.5 second delay
       return () => clearTimeout(timer);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showResult, autoContinue]);
 
   const handleAnswer = (optionId: string) => {
@@ -147,6 +146,10 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
       nextQuestion();
     }
   };
+
+  // Ref to always call latest handleNext in effects
+  const handleNextRef = useRef(handleNext);
+  handleNextRef.current = handleNext;
 
   const handleSkip = () => {
     skipQuestion();
