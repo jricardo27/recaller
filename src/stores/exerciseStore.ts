@@ -213,8 +213,9 @@ function generateExercises(
 
         exercise.hanziOptions = shuffle(hanziOptions);
         exercise.pinyinOptions = shuffle(pinyinOptions);
-        exercise.correctHanziAnswer = `hanzi-${word.id}`;
-        exercise.correctPinyinAnswer = `pinyin-${word.id}`;
+        exercise.correctHanziAnswer = "hanzi-" + word.id;
+        exercise.correctPinyinAnswer = "pinyin-" + word.id;
+        exercise.correctAnswer = "hanzi-" + word.id;
         break;
       }
 
