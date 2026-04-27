@@ -139,6 +139,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   }, [selectedHanzi, selectedPinyin, autoContinue, showResult, handleTripleMatchAnswer]);
 
   const handleNext = useCallback(() => {
+    console.log('[handleNext] Called');
     setSelectedOption(null);
     setSelectedHanzi(null);
     setSelectedPinyin(null);
@@ -148,9 +149,17 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     // Get fresh session state from store to check if we've reached the end
     // This is necessary because the session variable in the closure may be stale
     const currentSession = useExerciseStore.getState().session;
+    console.log('[handleNext] currentSession:', currentSession ? {
+      currentIndex: currentSession.currentIndex,
+      queueLength: currentSession.queue.length,
+      check: currentSession.currentIndex >= currentSession.queue.length - 1
+    } : null);
+    
     if (currentSession && currentSession.currentIndex >= currentSession.queue.length - 1) {
+      console.log('[handleNext] Calling completeSession');
       completeSession();
     } else {
+      console.log('[handleNext] Calling nextQuestion');
       nextQuestion();
     }
   }, [completeSession, nextQuestion]);
