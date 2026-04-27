@@ -1,14 +1,15 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Word } from '../types';
-import type { 
-  Exercise, 
-  ExerciseType, 
-  ExerciseSession, 
-  ExerciseStats, 
+import type {
+  Exercise,
+  ExerciseType,
+  ExerciseSession,
+  ExerciseStats,
   ExerciseDifficulty,
-  ExerciseOption 
+  ExerciseOption
 } from '../types/exercise';
+import { defaultExerciseStats } from '../config/exerciseTypes';
 
 interface ExerciseState {
   // Current session
@@ -45,20 +46,53 @@ function shuffle<T>(array: T[]): T[] {
 
 // Generate distractor pinyin options with tone variations
 function generatePinyinDistractors(correctPinyin: string, allWords: Word[]): string[] {
-  const distractors: string[] = [];
+  // Get unique pinyin values (excluding the correct one) using Set for efficiency
+  const uniquePinyin = new Set(
+    allWords.map(w => w.pinyin).filter((p): p is string => !!p && p !== correctPinyin)
+  );
   
-  // Get other pinyin from words
-  const otherPinyin = allWords
-    .map(w => w.pinyin)
-    .filter(p => p && p !== correctPinyin && !distractors.includes(p))
-    .slice(0, 2);
+  // Convert to array and pick 3 random distractors without shuffling entire array
+  const candidates = Array.from(uniquePinyin);
+  const selectedDistractors: string[] = [];
   
-  distractors.push(...otherPinyin);
+  while (selectedDistractors.length < 3 && candidates.length > 0) {
+    const randomIndex = Math.floor(Math.random() * candidates.length);
+    selectedDistractors.push(candidates[randomIndex]);
+    // Remove selected candidate to avoid duplicates
+    candidates.splice(randomIndex, 1);
+  }
   
-  // Add the correct one
-  distractors.push(correctPinyin);
-  
-  return shuffle(distractors);
+  // Add the correct one and shuffle final result
+  return shuffle([...selectedDistractors, correctPinyin]);
+}
+
+// Helper: Create hanzi options with same-length distractors
+function createHanziOptions(
+  word: Word,
+  enabledWords: Word[],
+  subtextKey: 'pinyin' | 'translation'
+): { options: ExerciseOption[]; correctId: string } {
+  const hanziLength = word.hanzi.length;
+  const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+
+  const options: ExerciseOption[] = shuffle(sameLengthWords)
+    .slice(0, 3)
+    .map(w => ({
+      id: `opt-${w.id}`,
+      text: w.hanzi,
+      subtext: subtextKey === 'pinyin' ? w.pinyin : w.translation,
+      isCorrect: false
+    }));
+
+  const correctId = `opt-${word.id}`;
+  options.push({
+    id: correctId,
+    text: word.hanzi,
+    subtext: subtextKey === 'pinyin' ? word.pinyin : word.translation,
+    isCorrect: true
+  });
+
+  return { options: shuffle(options), correctId };
 }
 
 // Generate exercises based on type
@@ -84,23 +118,13 @@ function generateExercises(
     switch (type) {
       case 'image-to-hanzi': {
         exercise.question = 'What word matches this image?';
-        exercise.questionData = { 
+        exercise.questionData = {
           imageUrl: word.imageUrl,
-          english: word.translation 
+          english: word.translation
         };
-        
-        // Filter distractors to have same hanzi length as correct answer
-        const hanziLength = word.hanzi.length;
-        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
 
-        const options: ExerciseOption[] = shuffle(sameLengthWords)
-          .slice(0, 3)
-          .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
-        
-        const correctId = `opt-${word.id}`;
-        options.push({ id: correctId, text: word.hanzi, subtext: word.pinyin, isCorrect: true });
-        
-        exercise.options = shuffle(options);
+        const { options, correctId } = createHanziOptions(word, enabledWords, 'pinyin');
+        exercise.options = options;
         exercise.correctAnswer = correctId;
         break;
       }
@@ -125,18 +149,8 @@ function generateExercises(
         exercise.question = word.pinyin;
         exercise.questionData = { pinyin: word.pinyin };
 
-        // Filter distractors to have same hanzi length as correct answer
-        const hanziLength = word.hanzi.length;
-        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
-
-        const options: ExerciseOption[] = shuffle(sameLengthWords)
-          .slice(0, 3)
-          .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.translation, isCorrect: false }));
-
-        const correctId = `opt-${word.id}`;
-        options.push({ id: correctId, text: word.hanzi, subtext: word.translation, isCorrect: true });
-
-        exercise.options = shuffle(options);
+        const { options, correctId } = createHanziOptions(word, enabledWords, 'translation');
+        exercise.options = options;
         exercise.correctAnswer = correctId;
         break;
       }
@@ -145,18 +159,8 @@ function generateExercises(
         exercise.question = word.translation;
         exercise.questionData = { english: word.translation };
 
-        // Filter distractors to have same hanzi length as correct answer
-        const hanziLength = word.hanzi.length;
-        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
-
-        const options: ExerciseOption[] = shuffle(sameLengthWords)
-          .slice(0, 3)
-          .map(w => ({ id: `opt-${w.id}`, text: w.hanzi, subtext: w.pinyin, isCorrect: false }));
-        
-        const correctId = `opt-${word.id}`;
-        options.push({ id: correctId, text: word.hanzi, subtext: word.pinyin, isCorrect: true });
-        
-        exercise.options = shuffle(options);
+        const { options, correctId } = createHanziOptions(word, enabledWords, 'pinyin');
+        exercise.options = options;
         exercise.correctAnswer = correctId;
         break;
       }
@@ -164,20 +168,59 @@ function generateExercises(
       case 'hanzi-to-english': {
         exercise.question = word.hanzi;
         exercise.questionData = { hanzi: word.hanzi, pinyin: word.pinyin };
-        
+
         const options: ExerciseOption[] = shuffle(enabledWords)
           .filter(w => w.id !== word.id)
           .slice(0, 3)
           .map(w => ({ id: `opt-${w.id}`, text: w.translation, isCorrect: false }));
-        
+
         const correctId = `opt-${word.id}`;
         options.push({ id: correctId, text: word.translation, isCorrect: true });
-        
+
         exercise.options = shuffle(options);
         exercise.correctAnswer = correctId;
         break;
       }
-      
+
+      case 'triple-match': {
+        exercise.question = 'Match hanzi AND pinyin';
+        exercise.questionData = {
+          imageUrl: word.imageUrl,
+          english: word.translation
+        };
+
+        // Get 3 distractor words for hanzi options (same-length for Expert mode)
+        const hanziLength = word.hanzi.length;
+        const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
+        const hanziDistractors = shuffle(sameLengthWords).slice(0, 3);
+        const hanziOptions: ExerciseOption[] = hanziDistractors.map(w => ({
+          id: `hanzi-${w.id}`,
+          text: w.hanzi,
+          isCorrect: false
+        }));
+        hanziOptions.push({
+          id: `hanzi-${word.id}`,
+          text: word.hanzi,
+          isCorrect: true
+        });
+
+        // Get pinyin options using helper for tone variation distractors (Expert mode)
+        const pinyinStrings = generatePinyinDistractors(word.pinyin, enabledWords);
+        const pinyinOptions: ExerciseOption[] = pinyinStrings.map((pinyin, index) => ({
+          id: `pinyin-${index}-${pinyin}`,
+          text: pinyin,
+          isCorrect: pinyin === word.pinyin
+        }));
+
+        exercise.hanziOptions = shuffle(hanziOptions);
+        exercise.pinyinOptions = shuffle(pinyinOptions);
+        exercise.correctHanziAnswer = "hanzi-" + word.id;
+        // Find the correct pinyin option ID
+        exercise.correctPinyinAnswer = pinyinOptions.find(opt => opt.isCorrect)?.id || '';
+        exercise.correctAnswer = "hanzi-" + word.id;
+        break;
+      }
+
       default:
         break;
     }
@@ -195,14 +238,7 @@ export const useExerciseStore = create<ExerciseState>()(
         completedExercises: 0,
         correctRate: 0,
         averageTime: 0,
-        byType: {
-          flashcard: { completed: 0, correct: 0 },
-          'image-to-hanzi': { completed: 0, correct: 0 },
-          'hanzi-to-pinyin': { completed: 0, correct: 0 },
-          'pinyin-to-hanzi': { completed: 0, correct: 0 },
-          'english-to-hanzi': { completed: 0, correct: 0 },
-          'hanzi-to-english': { completed: 0, correct: 0 }
-        }
+        byType: defaultExerciseStats
       },
 
       startSession: (type, words, difficulty) => {
@@ -287,25 +323,30 @@ export const useExerciseStore = create<ExerciseState>()(
         const duration = (new Date().getTime() - new Date(session.startTime).getTime()) / 1000;
         const avgTime = duration / Math.max(session.totalAnswered, 1);
         
-        set((state) => ({
-          session: null,
-          stats: {
-            ...state.stats,
-            totalExercises: state.stats.totalExercises + session.totalAnswered,
-            completedExercises: state.stats.completedExercises + 1,
-            correctRate: session.totalAnswered > 0 
-              ? (session.correctAnswers / session.totalAnswered) * 100 
-              : 0,
-            averageTime: (state.stats.averageTime + avgTime) / 2,
-            byType: {
-              ...state.stats.byType,
-              [session.type]: {
-                completed: state.stats.byType[session.type].completed + session.totalAnswered,
-                correct: state.stats.byType[session.type].correct + session.correctAnswers
+        set((state) => {
+          // Initialize type stats if they don't exist
+          const typeStats = state.stats.byType[session.type] || { completed: 0, correct: 0 };
+          
+          return {
+            session: null,
+            stats: {
+              ...state.stats,
+              totalExercises: state.stats.totalExercises + session.totalAnswered,
+              completedExercises: state.stats.completedExercises + 1,
+              correctRate: session.totalAnswered > 0 
+                ? (session.correctAnswers / session.totalAnswered) * 100 
+                : 0,
+              averageTime: (state.stats.averageTime + avgTime) / 2,
+              byType: {
+                ...state.stats.byType,
+                [session.type]: {
+                  completed: typeStats.completed + session.totalAnswered,
+                  correct: typeStats.correct + session.correctAnswers
+                }
               }
             }
-          }
-        }));
+          };
+        });
       },
 
       resetStats: () => {
@@ -315,14 +356,7 @@ export const useExerciseStore = create<ExerciseState>()(
             completedExercises: 0,
             correctRate: 0,
             averageTime: 0,
-            byType: {
-              flashcard: { completed: 0, correct: 0 },
-              'image-to-hanzi': { completed: 0, correct: 0 },
-              'hanzi-to-pinyin': { completed: 0, correct: 0 },
-              'pinyin-to-hanzi': { completed: 0, correct: 0 },
-              'english-to-hanzi': { completed: 0, correct: 0 },
-              'hanzi-to-english': { completed: 0, correct: 0 }
-            }
+            byType: defaultExerciseStats
           }
         });
       },
