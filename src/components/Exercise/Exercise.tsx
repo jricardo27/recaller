@@ -119,15 +119,25 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
 
   // Triple-match: submit answer when both selected
   const handleTripleMatchAnswer = () => {
-    if (showResult || !selectedHanzi || !selectedPinyin) return;
+    console.log('[TripleMatch] handleTripleMatchAnswer called');
+    console.log('[TripleMatch] showResult:', showResult, 'selectedHanzi:', selectedHanzi, 'selectedPinyin:', selectedPinyin);
+    
+    if (showResult || !selectedHanzi || !selectedPinyin) {
+      console.log('[TripleMatch] Early return - showResult:', showResult, '!selectedHanzi:', !selectedHanzi, '!selectedPinyin:', !selectedPinyin);
+      return;
+    }
 
     const exercise = getCurrentExercise();
+    console.log('[TripleMatch] exercise:', exercise?.id, 'correctHanzi:', exercise?.correctHanziAnswer, 'correctPinyin:', exercise?.correctPinyinAnswer);
+    
     if (!exercise || !exercise.correctHanziAnswer || !exercise.correctPinyinAnswer) return;
 
     const hanziCorrect = selectedHanzi === exercise.correctHanziAnswer;
     const pinyinCorrect = selectedPinyin === exercise.correctPinyinAnswer;
     const bothCorrect = hanziCorrect && pinyinCorrect;
+    console.log('[TripleMatch] hanziCorrect:', hanziCorrect, 'pinyinCorrect:', pinyinCorrect, 'bothCorrect:', bothCorrect);
 
+    console.log('[TripleMatch] Setting showResult to true');
     setIsCorrect(bothCorrect);
     setShowResult(true);
 
@@ -135,6 +145,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     // Only pass the correct hanzi ID when BOTH hanzi and pinyin are correct
     // If either is wrong, pass a dummy value so store records it as incorrect
     answerQuestion(exercise.id, bothCorrect ? selectedHanzi : '__incorrect__');
+    console.log('[TripleMatch] answerQuestion called');
   };
 
   const handleNext = () => {
