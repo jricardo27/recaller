@@ -165,8 +165,8 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
     // Check that each exercise has pinyin options with correct structure
     session?.queue.forEach((exercise) => {
       if (exercise.pinyinOptions) {
-        // Should have 3 pinyin options (2 distractors + 1 correct)
-        expect(exercise.pinyinOptions.length).toBe(3);
+        // Should have 4 pinyin options (3 distractors + 1 correct) to match hanzi options
+        expect(exercise.pinyinOptions.length).toBe(4);
         
         // Find the correct pinyin option
         const correctOption = exercise.pinyinOptions.find(opt => opt.isCorrect);

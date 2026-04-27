@@ -48,11 +48,11 @@ function shuffle<T>(array: T[]): T[] {
 function generatePinyinDistractors(correctPinyin: string, allWords: Word[]): string[] {
   const distractors: string[] = [];
   
-  // Get other pinyin from words
+  // Get other pinyin from words (3 distractors for consistency with hanzi options)
   const otherPinyin = allWords
     .map(w => w.pinyin)
     .filter(p => p && p !== correctPinyin && !distractors.includes(p))
-    .slice(0, 2);
+    .slice(0, 3);
   
   distractors.push(...otherPinyin);
   
