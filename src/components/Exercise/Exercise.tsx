@@ -82,11 +82,17 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
 
   // Auto-continue when result is shown
   useEffect(() => {
+    console.log('[AutoContinue] showResult:', showResult, 'autoContinue:', autoContinue);
     if (showResult && autoContinue) {
+      console.log('[AutoContinue] Starting timer');
       const timer = setTimeout(() => {
+        console.log('[AutoContinue] Timer fired, calling handleNext');
         handleNextRef.current();
       }, 1500); // 1.5 second delay
-      return () => clearTimeout(timer);
+      return () => {
+        console.log('[AutoContinue] Clearing timer');
+        clearTimeout(timer);
+      };
     }
   }, [showResult, autoContinue]);
 
