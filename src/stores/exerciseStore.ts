@@ -296,7 +296,7 @@ function generatePinyinDistractors(correctPinyin: string, allWords: Word[]): str
   return shuffle([...selectedDistractors, correctPinyin]);
 }
 
-// Helper: Create hanzi options with same-length distractors
+// Helper: Create hanzi options with same-length distractors and fallback
 function createHanziOptions(
   word: Word,
   enabledWords: Word[],
@@ -305,14 +305,22 @@ function createHanziOptions(
   const hanziLength = word.hanzi.length;
   const sameLengthWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length === hanziLength);
 
-  const options: ExerciseOption[] = shuffle(sameLengthWords)
-    .slice(0, 3)
-    .map(w => ({
-      id: `opt-${w.id}`,
-      text: w.hanzi,
-      subtext: subtextKey === 'pinyin' ? w.pinyin : w.translation,
-      isCorrect: false
-    }));
+  // Get same-length distractors first
+  let distractors = shuffle(sameLengthWords).slice(0, 3);
+
+  // Fallback: if not enough same-length words, add other words of different lengths
+  if (distractors.length < 3) {
+    const otherWords = enabledWords.filter(w => w.id !== word.id && w.hanzi.length !== hanziLength);
+    const additionalDistractors = shuffle(otherWords).slice(0, 3 - distractors.length);
+    distractors = [...distractors, ...additionalDistractors];
+  }
+
+  const options: ExerciseOption[] = distractors.map(w => ({
+    id: `opt-${w.id}`,
+    text: w.hanzi,
+    subtext: subtextKey === 'pinyin' ? w.pinyin : w.translation,
+    isCorrect: false
+  }));
 
   const correctId = `opt-${word.id}`;
   options.push({

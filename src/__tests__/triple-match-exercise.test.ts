@@ -544,4 +544,41 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
     const correctCount = exercise!.pinyinOptions!.filter(opt => opt.isCorrect).length;
     expect(correctCount).toBe(1);
   });
+
+  it('should fallback to different-length words when insufficient same-length distractors (Issue #7)', () => {
+    // Database with only 1 other word of same length (2 characters)
+    const limitedSameLengthWords: Word[] = [
+      { id: 1, hanzi: '你好', pinyin: 'nǐ hǎo', translation: 'hello', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '中国', pinyin: 'zhōng guó', translation: 'China', imageUrl: '/images/2.png', enabled: true }, // Same length
+      { id: 3, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/3.png', enabled: true }, // Different length
+      { id: 4, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/4.png', enabled: true }, // Different length
+      { id: 5, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/5.png', enabled: true }, // Different length
+    ];
+
+    store.startSession('image-to-hanzi', limitedSameLengthWords, 'medium');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Find an exercise for the 2-character word
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.options).toBeDefined();
+
+    // Should have exactly 4 options (1 correct + 3 distractors)
+    expect(exercise!.options.length).toBe(4);
+
+    // Should have exactly 1 correct option
+    const correctOptions = exercise!.options.filter(opt => opt.isCorrect);
+    expect(correctOptions.length).toBe(1);
+
+    // Should have exactly 3 distractors (incorrect options)
+    const distractorOptions = exercise!.options.filter(opt => !opt.isCorrect);
+    expect(distractorOptions.length).toBe(3);
+
+    // All options should have unique hanzi text
+    const uniqueHanzi = new Set(exercise!.options.map(opt => opt.text));
+    expect(uniqueHanzi.size).toBe(4);
+  });
 });
