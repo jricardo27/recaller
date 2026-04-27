@@ -450,4 +450,54 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
     const correctCount = exercise.pinyinOptions!.filter(opt => opt.isCorrect).length;
     expect(correctCount).toBe(1);
   });
+
+  it('should handle multi-part pinyin with tone variations in hard mode (Bug Fix)', () => {
+    // Test with pinyin containing multiple parts separated by "/"
+    const multiPartWords: Word[] = [
+      { id: 1, hanzi: '有', pinyin: 'yǒu / méi yǒu', translation: 'have/not have', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', multiPartWords, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Find the exercise with multi-part pinyin
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.pinyinOptions).toBeDefined();
+    expect(exercise!.pinyinOptions!.length).toBe(4);
+
+    // All options should have the same structure (both parts)
+    // If "yǒu / méi yǒu" is correct, distractors should be like "yōu / méi yōu", "yóu / méi yóu", etc.
+    exercise!.pinyinOptions!.forEach(opt => {
+      // Each option should contain the delimiter " / "
+      expect(opt.text).toContain(' / ');
+
+      // Both parts should have tone marks (not be base vowels)
+      const parts = opt.text.split(' / ');
+      expect(parts.length).toBe(2);
+
+      // Each part should have at least one toned vowel or be all base vowels
+      const hasTonedVowel = (str: string) => {
+        const tonedVowels = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/;
+        return tonedVowels.test(str);
+      };
+
+      // At least one of the two parts should have toned vowels
+      expect(hasTonedVowel(parts[0]) || hasTonedVowel(parts[1])).toBe(true);
+    });
+
+    // Should have exactly one correct answer
+    const correctCount = exercise!.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+
+    // Verify the correct answer matches the original pinyin
+    const correctOption = exercise!.pinyinOptions!.find(opt => opt.isCorrect);
+    expect(correctOption!.text).toBe('yǒu / méi yǒu');
+  });
 });
