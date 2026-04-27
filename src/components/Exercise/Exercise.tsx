@@ -145,13 +145,15 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     setShowResult(false);
     setIsCorrect(false);
 
-    // Use reactive session variable instead of getState()
-    if (session && session.currentIndex >= session.queue.length - 1) {
+    // Get fresh session state from store to check if we've reached the end
+    // This is necessary because the session variable in the closure may be stale
+    const currentSession = useExerciseStore.getState().session;
+    if (currentSession && currentSession.currentIndex >= currentSession.queue.length - 1) {
       completeSession();
     } else {
       nextQuestion();
     }
-  }, [session, completeSession, nextQuestion]);
+  }, [completeSession, nextQuestion]);
 
   // Ref to always call latest handleNext in effects
   const handleNextRef = useRef(handleNext);

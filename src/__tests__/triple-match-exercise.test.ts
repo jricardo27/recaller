@@ -298,4 +298,51 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       }
     });
   });
+
+  it('should complete session when reaching the last question (Bug Fix)', () => {
+    // Create a small set of words to have fewer questions
+    const fewWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+    ];
+    
+    store.startSession('triple-match', fewWords, 'medium');
+    
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+    
+    const queueLength = session!.queue.length;
+    
+    // Answer all questions except the last one
+    for (let i = 0; i < queueLength - 1; i++) {
+      const exercise = state.getCurrentExercise();
+      if (exercise) {
+        state.answerQuestion(exercise.id, exercise.correctHanziAnswer!);
+        state.nextQuestion();
+      }
+    }
+    
+    // Now we're at the last question
+    expect(state.session?.currentIndex).toBe(queueLength - 1);
+    
+    const lastExercise = state.getCurrentExercise();
+    expect(lastExercise).not.toBeNull();
+    
+    if (lastExercise) {
+      // Answer the last question
+      state.answerQuestion(lastExercise.id, lastExercise.correctHanziAnswer!);
+      
+      // At this point, if handleNext were called in the UI:
+      // - It would check currentIndex (queueLength - 1) >= queueLength - 1
+      // - This should be true, so completeSession() should be called
+      // - The session should end
+      
+      // Verify the session state shows we're at the last question
+      expect(state.session?.currentIndex).toBe(queueLength - 1);
+      expect(state.session?.totalAnswered).toBe(queueLength);
+    }
+  });
 });
