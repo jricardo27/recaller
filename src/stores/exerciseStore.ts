@@ -49,7 +49,8 @@ function generatePinyinDistractors(correctPinyin: string, allWords: Word[]): str
   const distractors: string[] = [];
   
   // Get other pinyin from words (3 distractors for consistency with hanzi options)
-  const otherPinyin = allWords
+  // Shuffle first to get random distractors, not always the first 3 in the array
+  const otherPinyin = shuffle(allWords)
     .map(w => w.pinyin)
     .filter(p => p && p !== correctPinyin && !distractors.includes(p))
     .slice(0, 3);
