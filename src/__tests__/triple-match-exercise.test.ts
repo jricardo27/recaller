@@ -345,4 +345,35 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
       expect(state.session?.totalAnswered).toBe(queueLength);
     }
   });
+
+  it('should initialize stats for new exercise type on endSession (Bug Fix)', () => {
+    // This tests that endSession doesn't crash when a new exercise type hasn't been recorded yet
+    const fewWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+    ];
+    
+    // Start and complete a triple-match session
+    store.startSession('triple-match', fewWords, 'medium');
+    
+    const state = useExerciseStore.getState();
+    const exercise = state.getCurrentExercise();
+    expect(exercise).not.toBeNull();
+    
+    if (exercise) {
+      // Answer the question
+      state.answerQuestion(exercise.id, exercise.correctHanziAnswer!);
+      
+      // endSession should not throw even if triple-match stats don't exist yet
+      expect(() => state.endSession()).not.toThrow();
+      
+      // Verify session is ended
+      const finalState = useExerciseStore.getState();
+      expect(finalState.session).toBeNull();
+      
+      // Verify stats were updated
+      expect(finalState.stats.completedExercises).toBe(1);
+      expect(finalState.stats.byType['triple-match']).toBeDefined();
+      expect(finalState.stats.byType['triple-match'].completed).toBeGreaterThan(0);
+    }
+  });
 });

@@ -323,25 +323,30 @@ export const useExerciseStore = create<ExerciseState>()(
         const duration = (new Date().getTime() - new Date(session.startTime).getTime()) / 1000;
         const avgTime = duration / Math.max(session.totalAnswered, 1);
         
-        set((state) => ({
-          session: null,
-          stats: {
-            ...state.stats,
-            totalExercises: state.stats.totalExercises + session.totalAnswered,
-            completedExercises: state.stats.completedExercises + 1,
-            correctRate: session.totalAnswered > 0 
-              ? (session.correctAnswers / session.totalAnswered) * 100 
-              : 0,
-            averageTime: (state.stats.averageTime + avgTime) / 2,
-            byType: {
-              ...state.stats.byType,
-              [session.type]: {
-                completed: state.stats.byType[session.type].completed + session.totalAnswered,
-                correct: state.stats.byType[session.type].correct + session.correctAnswers
+        set((state) => {
+          // Initialize type stats if they don't exist
+          const typeStats = state.stats.byType[session.type] || { completed: 0, correct: 0 };
+          
+          return {
+            session: null,
+            stats: {
+              ...state.stats,
+              totalExercises: state.stats.totalExercises + session.totalAnswered,
+              completedExercises: state.stats.completedExercises + 1,
+              correctRate: session.totalAnswered > 0 
+                ? (session.correctAnswers / session.totalAnswered) * 100 
+                : 0,
+              averageTime: (state.stats.averageTime + avgTime) / 2,
+              byType: {
+                ...state.stats.byType,
+                [session.type]: {
+                  completed: typeStats.completed + session.totalAnswered,
+                  correct: typeStats.correct + session.correctAnswers
+                }
               }
             }
-          }
-        }));
+          };
+        });
       },
 
       resetStats: () => {
