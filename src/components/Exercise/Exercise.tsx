@@ -118,7 +118,7 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
   };
 
   // Triple-match: submit answer when both selected
-  const handleTripleMatchAnswer = () => {
+  const handleTripleMatchAnswer = useCallback(() => {
     console.log('[TripleMatch] handleTripleMatchAnswer called');
     console.log('[TripleMatch] showResult:', showResult, 'selectedHanzi:', selectedHanzi, 'selectedPinyin:', selectedPinyin);
     
@@ -146,7 +146,16 @@ export function Exercise({ type, difficulty = 'medium', onFinish, onExit }: Exer
     // If either is wrong, pass a dummy value so store records it as incorrect
     answerQuestion(exercise.id, bothCorrect ? selectedHanzi : '__incorrect__');
     console.log('[TripleMatch] answerQuestion called');
-  };
+  }, [showResult, selectedHanzi, selectedPinyin, getCurrentExercise, answerQuestion]);
+
+  // Auto-submit for triple-match when both selections are made
+  useEffect(() => {
+    console.log('[AutoSubmit] selectedHanzi:', selectedHanzi, 'selectedPinyin:', selectedPinyin, 'autoContinue:', autoContinue, 'showResult:', showResult);
+    if (selectedHanzi && selectedPinyin && autoContinue && !showResult) {
+      console.log('[AutoSubmit] Both selected, auto-submitting');
+      handleTripleMatchAnswer();
+    }
+  }, [selectedHanzi, selectedPinyin, autoContinue, showResult, handleTripleMatchAnswer]);
 
   const handleNext = () => {
     setSelectedOption(null);
