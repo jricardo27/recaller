@@ -122,7 +122,7 @@ function generateToneVariations(correctPinyin: string): string[] {
     let base = pinyin;
     for (const [baseVowel, tonedVowels] of Object.entries(toneMap)) {
       for (const toned of tonedVowels.slice(0, 4)) {
-        base = base.replace(new RegExp(toned, 'g'), baseVowel);
+        base = base.replaceAll(toned, baseVowel);
       }
     }
     return base.toLowerCase().trim();
