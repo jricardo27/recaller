@@ -7,11 +7,10 @@ import { useWordStore } from './stores/wordStore';
 import { useExerciseStore } from './stores/exerciseStore';
 import type { WordsDatabase } from './types';
 import type { ExerciseType, ExerciseDifficulty } from './types/exercise';
+import { exerciseTypes } from './config/exerciseTypes';
 import { Play, Settings, BarChart3, BookOpen, Brain, ChevronRight } from 'lucide-react';
 
 type View = 'home' | 'study' | 'words' | 'stats' | 'exercise' | 'difficulty-select';
-
-import { exerciseTypes } from './config/exerciseTypes';
 
 function App() {
   const [view, setView] = useState<View>('home');
