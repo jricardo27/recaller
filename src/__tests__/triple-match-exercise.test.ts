@@ -621,4 +621,40 @@ describe('Triple-Match Exercise - Issue #1 Fix', () => {
     // The correct answer should be '再见' (word id 1)
     expect(correctHanziOptions[0].text).toBe('再见');
   });
+
+  it('should use random pinyin distractors as fallback instead of (N) suffix (Issue #3)', () => {
+    // Test with a word whose pinyin may not generate enough unique tone variations
+    const testWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+      { id: 5, hanzi: '五', pinyin: 'wǔ', translation: 'five', imageUrl: '/images/5.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', testWords, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Check all exercises
+    session!.queue.forEach(exercise => {
+      expect(exercise.pinyinOptions).toBeDefined();
+      expect(exercise.pinyinOptions!.length).toBe(4);
+
+      // None of the pinyin options should have the "(N)" suffix pattern
+      exercise.pinyinOptions!.forEach(opt => {
+        expect(opt.text).not.toMatch(/\(\d+\)$/); // Should not end with "(1)", "(2)", etc.
+      });
+
+      // All options should be unique
+      const uniquePinyin = new Set(exercise.pinyinOptions!.map(opt => opt.text));
+      expect(uniquePinyin.size).toBe(4);
+
+      // Should have exactly one correct answer
+      const correctCount = exercise.pinyinOptions!.filter(opt => opt.isCorrect).length;
+      expect(correctCount).toBe(1);
+    });
+  });
 });

@@ -46,7 +46,7 @@ function shuffle<T>(array: T[]): T[] {
 
 // Helper: Generate tone variations of a pinyin
 // Returns an array of 4 pinyin strings (3 wrong tone variations + correct one)
-function generateToneVariations(correctPinyin: string): string[] {
+function generateToneVariations(correctPinyin: string, allWords: Word[]): string[] {
   // Map of vowels with different tones
   const toneMap: Record<string, string[]> = {
     'a': ['ā', 'á', 'ǎ', 'à', 'a'],
@@ -266,9 +266,30 @@ function generateToneVariations(correctPinyin: string): string[] {
     distractorsGenerated++;
   }
 
-  // Fill remaining slots if needed
+  // Fill remaining slots with random pinyin from other words (better UX than "(N)" suffix)
+  if (fullVariations.length < 4) {
+    const needed = 4 - fullVariations.length;
+
+    // Get unique pinyin values from other words (excluding those already in variations)
+    const usedPinyin = new Set(fullVariations);
+    const otherPinyin = allWords
+      .map(w => w.pinyin)
+      .filter((p): p is string => !!p && p !== correctPinyin && !usedPinyin.has(p));
+
+    // Get unique values and shuffle
+    const uniqueOtherPinyin = shuffle([...new Set(otherPinyin)]);
+
+    // Add as many as needed (up to available)
+    for (let i = 0; i < needed && i < uniqueOtherPinyin.length; i++) {
+      fullVariations.push(uniqueOtherPinyin[i]);
+    }
+  }
+
+  // Final fallback: only if still not enough (extremely rare edge case)
+  let counter = 1;
   while (fullVariations.length < 4) {
-    fullVariations.push(correctPinyin + ` (${fullVariations.length})`);
+    fullVariations.push(correctPinyin + ` (${counter})`);
+    counter++;
   }
 
   return shuffle(fullVariations.slice(0, 4));
@@ -453,7 +474,7 @@ function generateExercises(
         // 'hard' difficulty uses tone variations (same pinyin, different tones)
         // other difficulties use random pinyin from other words
         const pinyinStrings = _difficulty === 'hard'
-          ? generateToneVariations(word.pinyin)
+          ? generateToneVariations(word.pinyin, enabledWords)
           : generatePinyinDistractors(word.pinyin, enabledWords);
 
         const pinyinOptions: ExerciseOption[] = pinyinStrings.map((pinyin, index) => ({
