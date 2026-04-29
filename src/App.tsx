@@ -22,6 +22,7 @@ function App() {
 
   const stats = useWordStore(state => state.getStats());
   const words = useWordStore(state => state.words);
+  const dbVersion = useWordStore(state => state.dbVersion);
   const loadWords = useWordStore(state => state.loadWords);
   const exerciseStats = useExerciseStore(state => state.stats);
   const endSession = useExerciseStore(state => state.endSession);
@@ -38,9 +39,9 @@ function App() {
         const data: WordsDatabase = await response.json();
         setDbInfo({ version: data.version, count: data.wordCount });
 
-        // Only load if we don't have words yet
-        if (words.length === 0) {
-          loadWords(data.words);
+        // Load if version changed or we don't have words yet
+        if (dbVersion !== data.version || words.length === 0) {
+          loadWords(data.words, data.version);
         }
 
         setLoading(false);
