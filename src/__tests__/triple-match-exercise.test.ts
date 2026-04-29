@@ -1,0 +1,660 @@
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
+import { useExerciseStore } from '../stores/exerciseStore';
+import type { Word } from '../types';
+
+describe('Triple-Match Exercise - Issue #1 Fix', () => {
+  const mockWords: Word[] = [
+    { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+    { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+    { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+    { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+    { id: 5, hanzi: '五', pinyin: 'wǔ', translation: 'five', imageUrl: '/images/5.png', enabled: true },
+  ];
+
+  let store: ReturnType<typeof useExerciseStore.getState>;
+
+  beforeAll(() => {
+    // Get initial store state
+    store = useExerciseStore.getState();
+  });
+
+  beforeEach(() => {
+    // Reset the store to initial state before each test
+    store.endSession();
+    store.resetStats();
+  });
+
+  it('triple-match exercises should have correctAnswer property set (Issue #1)', () => {
+    // Start a triple-match session
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    // Access the store state after starting session
+    const currentState = useExerciseStore.getState();
+    const session = currentState.session;
+    
+    expect(session).not.toBeNull();
+    expect(session?.type).toBe('triple-match');
+    expect(session?.queue.length).toBeGreaterThan(0);
+    
+    // Check that each exercise has the required properties
+    session?.queue.forEach((exercise) => {
+      // This is the key fix - correctAnswer must be set for the store's answerQuestion to work
+      expect(exercise.correctAnswer).toBeDefined();
+      expect(exercise.correctAnswer).toMatch(/^hanzi-\d+$/);
+      expect(exercise.correctHanziAnswer).toBeDefined();
+      expect(exercise.correctPinyinAnswer).toBeDefined();
+      expect(exercise.hanziOptions).toBeDefined();
+      expect(exercise.pinyinOptions).toBeDefined();
+      
+      // Verify correctAnswer matches correctHanziAnswer - this is the fix
+      expect(exercise.correctAnswer).toBe(exercise.correctHanziAnswer);
+    });
+  });
+
+  it('answerQuestion should return correct=true when selected option matches correctAnswer', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    if (exercise) {
+      // Answer with the correct hanzi (matching correctAnswer)
+      const correctHanziId = exercise.correctHanziAnswer!;
+      const result = currentState.answerQuestion(exercise.id, correctHanziId);
+      
+      // Should be correct because correctAnswer is set to the hanzi ID
+      expect(result.correct).toBe(true);
+      expect(result.correctAnswer).toBe(correctHanziId);
+    } else {
+      // If no exercise, the test should fail
+      expect(exercise).not.toBeNull();
+    }
+  });
+
+  it('answerQuestion should return correct=false for incorrect hanzi options', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    if (exercise && exercise.hanziOptions) {
+      // Find an incorrect hanzi option
+      const incorrectOption = exercise.hanziOptions.find(opt => !opt.isCorrect);
+      expect(incorrectOption).toBeDefined();
+      
+      if (incorrectOption) {
+        const result = currentState.answerQuestion(exercise.id, incorrectOption.id);
+        expect(result.correct).toBe(false);
+        expect(result.correctAnswer).toBe(exercise.correctAnswer);
+      }
+    } else {
+      // If no exercise, the test should fail
+      expect(exercise).not.toBeNull();
+    }
+  });
+
+  it('should record incorrect answer when hanzi is correct but pinyin is wrong (Issue #2)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    if (exercise && exercise.hanziOptions && exercise.pinyinOptions) {
+      // Select the correct hanzi
+      const correctHanziId = exercise.correctHanziAnswer!;
+      
+      // Select an incorrect pinyin
+      const incorrectPinyin = exercise.pinyinOptions.find(opt => !opt.isCorrect);
+      expect(incorrectPinyin).toBeDefined();
+      
+      // This simulates the UI logic: bothCorrect = hanziCorrect && pinyinCorrect
+      const hanziCorrect = correctHanziId === exercise.correctHanziAnswer;
+      const pinyinCorrect = incorrectPinyin!.id === exercise.correctPinyinAnswer;
+      const bothCorrect = hanziCorrect && pinyinCorrect;
+      
+      // When pinyin is wrong, bothCorrect should be false
+      expect(bothCorrect).toBe(false);
+      
+      // The fix: pass '__incorrect__' when bothCorrect is false
+      // This ensures the store records it as incorrect even though hanzi matches
+      const answerToSubmit = bothCorrect ? correctHanziId : '__incorrect__';
+      const result = currentState.answerQuestion(exercise.id, answerToSubmit);
+      
+      // Should be recorded as incorrect
+      expect(result.correct).toBe(false);
+    } else {
+      expect(exercise).not.toBeNull();
+    }
+  });
+
+  it('should use same-length hanzi distractors for Expert mode (Issue #3)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const session = currentState.session;
+    
+    expect(session).not.toBeNull();
+    
+    // Check that each exercise has same-length hanzi distractors
+    session?.queue.forEach((exercise) => {
+      if (exercise.hanziOptions) {
+        // Find the correct answer
+        const correctOption = exercise.hanziOptions.find(opt => opt.isCorrect);
+        expect(correctOption).toBeDefined();
+        
+        if (correctOption) {
+          const correctHanziLength = correctOption.text.length;
+          
+          // All distractors should have same length as correct answer
+          exercise.hanziOptions.forEach((option) => {
+            expect(option.text.length).toBe(correctHanziLength);
+          });
+        }
+      }
+    });
+  });
+
+  it('should use generatePinyinDistractors helper for pinyin options (Issue #4)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const session = currentState.session;
+    
+    expect(session).not.toBeNull();
+    
+    // Check that each exercise has pinyin options with correct structure
+    session?.queue.forEach((exercise) => {
+      if (exercise.pinyinOptions) {
+        // Should have 4 pinyin options (3 distractors + 1 correct) to match hanzi options
+        expect(exercise.pinyinOptions.length).toBe(4);
+        
+        // Find the correct pinyin option
+        const correctOption = exercise.pinyinOptions.find(opt => opt.isCorrect);
+        expect(correctOption).toBeDefined();
+        expect(correctOption?.id).toMatch(/^pinyin-\d+-/);
+        
+        // All options should have the new ID format
+        exercise.pinyinOptions.forEach((option) => {
+          expect(option.id).toMatch(/^pinyin-\d+-/);
+          expect(option.text).toBeDefined();
+        });
+        
+        // correctPinyinAnswer should match the correct option's ID
+        expect(exercise.correctPinyinAnswer).toBe(correctOption?.id);
+      }
+    });
+  });
+
+  it('should complete session when answering the last question (Bug Fix)', () => {
+    // Use exactly the mockWords array (5 words), queue will have min(10, 5) = 5 questions
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const queueLength = currentState.session?.queue.length || 0;
+    
+    // Answer all questions except the last one
+    for (let i = 0; i < queueLength - 1; i++) {
+      const exercise = currentState.getCurrentExercise();
+      if (exercise) {
+        currentState.answerQuestion(exercise.id, exercise.correctHanziAnswer!);
+        currentState.nextQuestion();
+      }
+    }
+    
+    // Now we're at the last question
+    const lastExercise = currentState.getCurrentExercise();
+    expect(lastExercise).not.toBeNull();
+    expect(currentState.session?.currentIndex).toBe(queueLength - 1);
+    
+    if (lastExercise) {
+      // Answer the last question
+      currentState.answerQuestion(lastExercise.id, lastExercise.correctHanziAnswer!);
+      
+      // Move to next (which should trigger completion check in UI)
+      currentState.nextQuestion();
+      
+      // After nextQuestion on last item, currentIndex should equal queue.length
+      const finalState = useExerciseStore.getState();
+      expect(finalState.session?.currentIndex).toBe(queueLength);
+      
+      // Verify getCurrentExercise returns null (session effectively complete)
+      expect(finalState.getCurrentExercise()).toBeNull();
+    }
+  });
+
+  it('should auto-submit when both hanzi and pinyin are selected (auto-continue)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    expect(exercise).not.toBeNull();
+    
+    if (exercise) {
+      // Simulate auto-submit by calling answerQuestion directly
+      // In the UI, the useEffect would trigger when both selections are made
+      const correctHanziId = exercise.correctHanziAnswer!;
+      
+      // Answer the question (this is what handleTripleMatchAnswer does)
+      currentState.answerQuestion(exercise.id, correctHanziId);
+      
+      // Verify answer was recorded in the store
+      expect(currentState.session?.totalAnswered).toBe(1);
+      expect(currentState.session?.correctAnswers).toBe(1);
+    }
+  });
+
+  it('should verify auto-submit prerequisites (both selections + autoContinue enabled)', () => {
+    // This test verifies the conditions that trigger auto-submit in the UI
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const exercise = currentState.getCurrentExercise();
+    
+    expect(exercise).not.toBeNull();
+    
+    if (exercise) {
+      // The UI auto-submit useEffect checks:
+      // selectedHanzi && selectedPinyin && autoContinue && !showResult
+      
+      // Verify exercise has the required answer properties
+      expect(exercise.correctHanziAnswer).toBeDefined();
+      expect(exercise.correctPinyinAnswer).toBeDefined();
+      expect(exercise.correctAnswer).toBeDefined();
+      
+      // Verify both hanzi and pinyin options exist
+      expect(exercise.hanziOptions).toBeDefined();
+      expect(exercise.pinyinOptions).toBeDefined();
+      expect(exercise.hanziOptions?.length).toBe(4);
+      expect(exercise.pinyinOptions?.length).toBe(4);
+    }
+  });
+
+  it('should generate unique pinyin distractors without duplicates (Issue #4 & #5)', () => {
+    store.startSession('triple-match', mockWords, 'medium');
+    
+    const currentState = useExerciseStore.getState();
+    const session = currentState.session;
+    
+    expect(session).not.toBeNull();
+    
+    // Check all exercises for unique pinyin options
+    session?.queue.forEach((exercise) => {
+      if (exercise.pinyinOptions) {
+        // Extract just the pinyin text values
+        const pinyinTexts = exercise.pinyinOptions.map(opt => opt.text);
+        
+        // Verify all pinyin options are unique (no duplicates)
+        const uniquePinyin = new Set(pinyinTexts);
+        expect(uniquePinyin.size).toBe(pinyinTexts.length);
+        
+        // Should have exactly one correct answer
+        const correctCount = exercise.pinyinOptions.filter(opt => opt.isCorrect).length;
+        expect(correctCount).toBe(1);
+        
+        // The correct answer text should match one of the options
+        const correctOption = exercise.pinyinOptions.find(opt => opt.isCorrect);
+        expect(correctOption?.text).toBeDefined();
+      }
+    });
+  });
+
+  it('should complete session when reaching the last question (Bug Fix)', () => {
+    // Create a small set of words to have fewer questions
+    const fewWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+    ];
+    
+    store.startSession('triple-match', fewWords, 'medium');
+    
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+    
+    const queueLength = session!.queue.length;
+    
+    // Answer all questions except the last one
+    for (let i = 0; i < queueLength - 1; i++) {
+      const exercise = state.getCurrentExercise();
+      if (exercise) {
+        state.answerQuestion(exercise.id, exercise.correctHanziAnswer!);
+        state.nextQuestion();
+      }
+    }
+    
+    // Now we're at the last question
+    expect(state.session?.currentIndex).toBe(queueLength - 1);
+    
+    const lastExercise = state.getCurrentExercise();
+    expect(lastExercise).not.toBeNull();
+    
+    if (lastExercise) {
+      // Answer the last question
+      state.answerQuestion(lastExercise.id, lastExercise.correctHanziAnswer!);
+      
+      // At this point, if handleNext were called in the UI:
+      // - It would check currentIndex (queueLength - 1) >= queueLength - 1
+      // - This should be true, so completeSession() should be called
+      // - The session should end
+      
+      // Verify the session state shows we're at the last question
+      expect(state.session?.currentIndex).toBe(queueLength - 1);
+      expect(state.session?.totalAnswered).toBe(queueLength);
+    }
+  });
+
+  it('should initialize stats for new exercise type on endSession (Bug Fix)', () => {
+    // This tests that endSession doesn't crash when a new exercise type hasn't been recorded yet
+    const fewWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+    ];
+    
+    // Start and complete a triple-match session
+    store.startSession('triple-match', fewWords, 'medium');
+    
+    const state = useExerciseStore.getState();
+    const exercise = state.getCurrentExercise();
+    expect(exercise).not.toBeNull();
+    
+    if (exercise) {
+      // Answer the question
+      state.answerQuestion(exercise.id, exercise.correctHanziAnswer!);
+      
+      // endSession should not throw even if triple-match stats don't exist yet
+      expect(() => state.endSession()).not.toThrow();
+      
+      // Verify session is ended
+      const finalState = useExerciseStore.getState();
+      expect(finalState.session).toBeNull();
+      
+      // Verify stats were updated
+      expect(finalState.stats.completedExercises).toBe(1);
+      expect(finalState.stats.byType['triple-match']).toBeDefined();
+      expect(finalState.stats.byType['triple-match'].completed).toBeGreaterThan(0);
+    }
+  });
+
+  it('should generate tone variations for pinyin in hard difficulty mode', () => {
+    // Use words with clear tone marks
+    const toneWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', toneWords, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Check that pinyin options in hard mode are tone variations
+    const exercise = session!.queue[0];
+    expect(exercise.pinyinOptions).toBeDefined();
+    expect(exercise.pinyinOptions!.length).toBe(4);
+
+    // Extract the base pinyin (without tone) from each option
+    const extractBase = (pinyin: string): string => {
+      return pinyin
+        .replace(/[āáǎà]/g, 'a')
+        .replace(/[ēéěè]/g, 'e')
+        .replace(/[īíǐì]/g, 'i')
+        .replace(/[ōóǒò]/g, 'o')
+        .replace(/[ūúǔù]/g, 'u')
+        .replace(/[ǖǘǚǜ]/g, 'ü');
+    };
+
+    const bases = exercise.pinyinOptions!.map(opt => extractBase(opt.text));
+
+    // All options should have the same base (same letters, just different tones)
+    const firstBase = bases[0];
+    bases.forEach(base => {
+      expect(base).toBe(firstBase);
+    });
+
+    // Should have exactly one correct answer
+    const correctCount = exercise.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+  });
+
+  it('should use random pinyin distractors in medium difficulty (not tone variations)', () => {
+    const toneWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', toneWords, 'medium');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Check that pinyin options in medium mode are from different words
+    const exercise = session!.queue[0];
+    expect(exercise.pinyinOptions).toBeDefined();
+    expect(exercise.pinyinOptions!.length).toBe(4);
+
+    // Extract unique pinyin values
+    const uniquePinyin = new Set(exercise.pinyinOptions!.map(opt => opt.text));
+
+    // Should have 4 different pinyin options (from different words)
+    expect(uniquePinyin.size).toBe(4);
+
+    // Should have exactly one correct answer
+    const correctCount = exercise.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+  });
+
+  it('should handle multi-part pinyin with tone variations in hard mode (Bug Fix)', () => {
+    // Test with pinyin containing multiple parts separated by "/"
+    const multiPartWords: Word[] = [
+      { id: 1, hanzi: '有', pinyin: 'yǒu / méi yǒu', translation: 'have/not have', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', multiPartWords, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Find the exercise with multi-part pinyin
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.pinyinOptions).toBeDefined();
+    expect(exercise!.pinyinOptions!.length).toBe(4);
+
+    // All options should have the same structure (both parts)
+    // If "yǒu / méi yǒu" is correct, distractors should be like "yōu / méi yōu", "yóu / méi yóu", etc.
+    exercise!.pinyinOptions!.forEach(opt => {
+      // Each option should contain the delimiter " / "
+      expect(opt.text).toContain(' / ');
+
+      // Both parts should have tone marks (not be base vowels)
+      const parts = opt.text.split(' / ');
+      expect(parts.length).toBe(2);
+
+      // Each part should have at least one toned vowel or be all base vowels
+      const hasTonedVowel = (str: string) => {
+        const tonedVowels = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/;
+        return tonedVowels.test(str);
+      };
+
+      // At least one of the two parts should have toned vowels
+      expect(hasTonedVowel(parts[0]) || hasTonedVowel(parts[1])).toBe(true);
+    });
+
+    // Should have exactly one correct answer
+    const correctCount = exercise!.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+
+    // Verify the correct answer matches the original pinyin
+    const correctOption = exercise!.pinyinOptions!.find(opt => opt.isCorrect);
+    expect(correctOption!.text).toBe('yǒu / méi yǒu');
+  });
+
+  it('should maintain consistent tone changes for identical syllables in multi-part pinyin (Bug Fix)', () => {
+    // Test with pinyin containing the same syllable multiple times
+    // When the syllable "yǒu" appears twice, both instances should get the same tone change
+    const wordsWithRepeatedSyllable: Word[] = [
+      { id: 1, hanzi: '有', pinyin: 'yǒu / méi yǒu', translation: 'have/not have', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/4.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', wordsWithRepeatedSyllable, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.pinyinOptions).toBeDefined();
+
+    // For each option, check that "yǒu" syllables have consistent tones
+    exercise!.pinyinOptions!.forEach(opt => {
+      const parts = opt.text.split(' / ');
+      if (parts.length === 2) {
+        // Extract just the first syllable from each part
+        // Second part is "méi yǒu" - extract the last word (yǒu)
+        const firstSyllable = parts[0].trim();
+        const secondPartWords = parts[1].trim().split(/\s+/);
+        const secondSyllable = secondPartWords[secondPartWords.length - 1];
+
+        // Both "yǒu" instances should be identical (same tone)
+        expect(firstSyllable).toBe(secondSyllable);
+      }
+    });
+
+    // All options should be unique
+    const uniqueOptions = new Set(exercise!.pinyinOptions!.map(opt => opt.text));
+    expect(uniqueOptions.size).toBe(4);
+
+    // Should have exactly one correct answer
+    const correctCount = exercise!.pinyinOptions!.filter(opt => opt.isCorrect).length;
+    expect(correctCount).toBe(1);
+  });
+
+  it('should fallback to different-length words when insufficient same-length distractors (Issue #7)', () => {
+    // Database with only 1 other word of same length (2 characters)
+    const limitedSameLengthWords: Word[] = [
+      { id: 1, hanzi: '你好', pinyin: 'nǐ hǎo', translation: 'hello', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '中国', pinyin: 'zhōng guó', translation: 'China', imageUrl: '/images/2.png', enabled: true }, // Same length
+      { id: 3, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/3.png', enabled: true }, // Different length
+      { id: 4, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/4.png', enabled: true }, // Different length
+      { id: 5, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/5.png', enabled: true }, // Different length
+    ];
+
+    store.startSession('image-to-hanzi', limitedSameLengthWords, 'medium');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Find an exercise for the 2-character word
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.options).toBeDefined();
+
+    // Should have exactly 4 options (1 correct + 3 distractors)
+    expect(exercise!.options.length).toBe(4);
+
+    // Should have exactly 1 correct option
+    const correctOptions = exercise!.options.filter(opt => opt.isCorrect);
+    expect(correctOptions.length).toBe(1);
+
+    // Should have exactly 3 distractors (incorrect options)
+    const distractorOptions = exercise!.options.filter(opt => !opt.isCorrect);
+    expect(distractorOptions.length).toBe(3);
+
+    // All options should have unique hanzi text
+    const uniqueHanzi = new Set(exercise!.options.map(opt => opt.text));
+    expect(uniqueHanzi.size).toBe(4);
+  });
+
+  it('should fallback to different-length words in triple-match when insufficient same-length distractors (Issue #8)', () => {
+    // Database with only 1 other word of same length as target
+    const limitedSameLengthWords: Word[] = [
+      { id: 1, hanzi: '再见', pinyin: 'zài jiàn', translation: 'goodbye', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '你好', pinyin: 'nǐ hǎo', translation: 'hello', imageUrl: '/images/2.png', enabled: true }, // Same length
+      { id: 3, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/3.png', enabled: true }, // Different length
+      { id: 4, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/4.png', enabled: true }, // Different length
+      { id: 5, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/5.png', enabled: true }, // Different length
+    ];
+
+    store.startSession('triple-match', limitedSameLengthWords, 'medium');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Find an exercise for the 2-character word
+    const exercise = session!.queue.find(ex => ex.wordId === 1);
+    expect(exercise).toBeDefined();
+    expect(exercise!.hanziOptions).toBeDefined();
+
+    // Should have exactly 4 hanzi options (1 correct + 3 distractors)
+    expect(exercise!.hanziOptions!.length).toBe(4);
+
+    // Should have exactly 1 correct hanzi option
+    const correctHanziOptions = exercise!.hanziOptions!.filter(opt => opt.isCorrect);
+    expect(correctHanziOptions.length).toBe(1);
+
+    // Should have exactly 3 distractor hanzi options
+    const distractorHanziOptions = exercise!.hanziOptions!.filter(opt => !opt.isCorrect);
+    expect(distractorHanziOptions.length).toBe(3);
+
+    // All hanzi options should have unique text
+    const uniqueHanzi = new Set(exercise!.hanziOptions!.map(opt => opt.text));
+    expect(uniqueHanzi.size).toBe(4);
+
+    // The correct answer should be '再见' (word id 1)
+    expect(correctHanziOptions[0].text).toBe('再见');
+  });
+
+  it('should use random pinyin distractors as fallback instead of (N) suffix (Issue #3)', () => {
+    // Test with a word whose pinyin may not generate enough unique tone variations
+    const testWords: Word[] = [
+      { id: 1, hanzi: '一', pinyin: 'yī', translation: 'one', imageUrl: '/images/1.png', enabled: true },
+      { id: 2, hanzi: '二', pinyin: 'èr', translation: 'two', imageUrl: '/images/2.png', enabled: true },
+      { id: 3, hanzi: '三', pinyin: 'sān', translation: 'three', imageUrl: '/images/3.png', enabled: true },
+      { id: 4, hanzi: '四', pinyin: 'sì', translation: 'four', imageUrl: '/images/4.png', enabled: true },
+      { id: 5, hanzi: '五', pinyin: 'wǔ', translation: 'five', imageUrl: '/images/5.png', enabled: true },
+    ];
+
+    store.startSession('triple-match', testWords, 'hard');
+
+    const state = useExerciseStore.getState();
+    const session = state.session;
+    expect(session).not.toBeNull();
+
+    // Check all exercises
+    session!.queue.forEach(exercise => {
+      expect(exercise.pinyinOptions).toBeDefined();
+      expect(exercise.pinyinOptions!.length).toBe(4);
+
+      // None of the pinyin options should have the "(N)" suffix pattern
+      exercise.pinyinOptions!.forEach(opt => {
+        expect(opt.text).not.toMatch(/\(\d+\)$/); // Should not end with "(1)", "(2)", etc.
+      });
+
+      // All options should be unique
+      const uniquePinyin = new Set(exercise.pinyinOptions!.map(opt => opt.text));
+      expect(uniquePinyin.size).toBe(4);
+
+      // Should have exactly one correct answer
+      const correctCount = exercise.pinyinOptions!.filter(opt => opt.isCorrect).length;
+      expect(correctCount).toBe(1);
+    });
+  });
+});

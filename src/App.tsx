@@ -7,53 +7,10 @@ import { useWordStore } from './stores/wordStore';
 import { useExerciseStore } from './stores/exerciseStore';
 import type { WordsDatabase } from './types';
 import type { ExerciseType, ExerciseDifficulty } from './types/exercise';
-import { Play, Settings, BarChart3, BookOpen, Brain, Image, Type, ArrowRightLeft, Globe, Languages, ChevronRight } from 'lucide-react';
+import { exerciseTypes } from './config/exerciseTypes';
+import { Play, Settings, BarChart3, BookOpen, Brain, ChevronRight } from 'lucide-react';
 
-type View = 'home' | 'study' | 'words' | 'stats' | 'exercise';
-
-const exerciseTypes: {
-  type: ExerciseType;
-  title: string;
-  description: string;
-  icon: typeof Image;
-  color: string;
-}[] = [
-  {
-    type: 'image-to-hanzi',
-    title: 'Image to Word',
-    description: 'See an image, select the matching hanzi',
-    icon: Image,
-    color: 'from-purple-500 to-pink-500',
-  },
-  {
-    type: 'hanzi-to-pinyin',
-    title: 'Hanzi to Pinyin',
-    description: 'See hanzi, select the correct pinyin',
-    icon: Type,
-    color: 'from-blue-500 to-cyan-500',
-  },
-  {
-    type: 'pinyin-to-hanzi',
-    title: 'Pinyin to Hanzi',
-    description: 'Hear/see pinyin, select the matching hanzi',
-    icon: ArrowRightLeft,
-    color: 'from-green-500 to-emerald-500',
-  },
-  {
-    type: 'english-to-hanzi',
-    title: 'English to Hanzi',
-    description: 'See English, select the correct hanzi/pinyin',
-    icon: Globe,
-    color: 'from-orange-500 to-red-500',
-  },
-  {
-    type: 'hanzi-to-english',
-    title: 'Hanzi to English',
-    description: 'See hanzi, select the English meaning',
-    icon: Languages,
-    color: 'from-indigo-500 to-purple-500',
-  },
-];
+type View = 'home' | 'study' | 'words' | 'stats' | 'exercise' | 'difficulty-select';
 
 function App() {
   const [view, setView] = useState<View>('home');
@@ -61,6 +18,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [dbInfo, setDbInfo] = useState<{ version: string; count: number } | null>(null);
   const [exerciseConfig, setExerciseConfig] = useState<{ type: ExerciseType; difficulty: ExerciseDifficulty } | null>(null);
+  const [selectedExerciseType, setSelectedExerciseType] = useState<ExerciseType | null>(null);
 
   const stats = useWordStore(state => state.getStats());
   const words = useWordStore(state => state.words);
@@ -165,6 +123,99 @@ function App() {
     );
   }
 
+  // Difficulty Selection view
+  if (view === 'difficulty-select' && selectedExerciseType) {
+    const selectedExercise = exerciseTypes.find(e => e.type === selectedExerciseType);
+    const Icon = selectedExercise?.icon;
+
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-md mx-auto pt-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            {Icon && selectedExercise && (
+              <div className={`w-20 h-20 bg-gradient-to-br ${selectedExercise.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                <Icon size={40} className="text-white" />
+              </div>
+            )}
+            <h1 className="text-2xl font-bold text-gray-800">{selectedExercise?.title}</h1>
+            <p className="text-sm text-gray-500 mt-1">Select difficulty level</p>
+          </div>
+
+          {/* Difficulty Buttons */}
+          <div className="space-y-4">
+            <button
+              onClick={() => {
+                setExerciseConfig({ type: selectedExerciseType, difficulty: 'easy' });
+                setView('exercise');
+              }}
+              className="w-full p-5 rounded-2xl border-2 border-green-200 bg-white hover:border-green-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">🌱</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">Easy</h3>
+                  <p className="text-sm text-gray-500">Relaxed practice mode</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setExerciseConfig({ type: selectedExerciseType, difficulty: 'medium' });
+                setView('exercise');
+              }}
+              className="w-full p-5 rounded-2xl border-2 border-blue-200 bg-white hover:border-blue-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">📚</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">Medium</h3>
+                  <p className="text-sm text-gray-500">Standard challenge</p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setExerciseConfig({ type: selectedExerciseType, difficulty: 'hard' });
+                setView('exercise');
+              }}
+              className="w-full p-5 rounded-2xl border-2 border-red-200 bg-white hover:border-red-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">🔥</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">Hard</h3>
+                  <p className="text-sm text-gray-500">Expert mode with tone variations</p>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          {/* Back Button */}
+          <div className="fixed bottom-4 left-4 right-4">
+            <button
+              onClick={() => {
+                setSelectedExerciseType(null);
+                setView('home');
+              }}
+              className="w-full py-3 bg-white shadow-lg rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition"
+            >
+              ← Back to Exercises
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (view === 'exercise' && exerciseConfig) {
     return (
       <Exercise
@@ -263,8 +314,8 @@ function App() {
                 <button
                   key={exercise.type}
                   onClick={() => {
-                    setExerciseConfig({ type: exercise.type, difficulty: 'medium' });
-                    setView('exercise');
+                    setSelectedExerciseType(exercise.type);
+                    setView('difficulty-select');
                   }}
                   className="w-full p-4 rounded-2xl border-2 border-white bg-white hover:border-blue-200 hover:shadow-sm transition-all text-left"
                 >
