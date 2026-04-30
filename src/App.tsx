@@ -32,7 +32,7 @@ function App() {
     const loadData = async () => {
       try {
         // First, fetch version.json to check if update is needed
-        const versionResponse = await fetch(`${import.meta.env.BASE_URL}data/version.json`);
+        const versionResponse = await fetch(import.meta.env.BASE_URL + 'data/version.json', { cache: 'no-cache' });
         if (!versionResponse.ok) {
           throw new Error('Failed to load version info');
         }

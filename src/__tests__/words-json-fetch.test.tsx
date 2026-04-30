@@ -102,4 +102,28 @@ describe('words.json fetch', () => {
     expect(fetchCalls[0][0]).toMatch(/\/recaller\/.*data\/version\.json$/);
     expect(fetchCalls[1][0]).toMatch(/\/recaller\/.*data\/words\.json$/);
   });
+
+  it('should fetch version.json with cache: no-cache option', async () => {
+    // Mock version.json response
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        version: '1.0.0',
+        wordCount: 100
+      })
+    });
+
+    render(<App />);
+
+    // Wait for the fetch call to be made
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled();
+    });
+
+    // Verify version.json was fetched with cache: 'no-cache' option
+    const fetchCalls = mockFetch.mock.calls;
+    const versionJsonCall = fetchCalls[0];
+    expect(versionJsonCall[0]).toMatch(/\/recaller\/.*data\/version\.json$/);
+    expect(versionJsonCall[1]).toEqual({ cache: 'no-cache' });
+  });
 });
