@@ -31,16 +31,23 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}data/words.json`);
-        if (!response.ok) {
-          throw new Error('Failed to load words database');
+        // First, fetch version.json to check if update is needed
+        const versionResponse = await fetch(`${import.meta.env.BASE_URL}data/version.json`);
+        if (!versionResponse.ok) {
+          throw new Error('Failed to load version info');
         }
 
-        const data: WordsDatabase = await response.json();
-        setDbInfo({ version: data.version, count: data.wordCount });
+        const versionData = await versionResponse.json();
+        setDbInfo({ version: versionData.version, count: versionData.wordCount });
 
-        // Load if version changed or we don't have words yet
-        if (dbVersion !== data.version || words.length === 0) {
+        // Only fetch full words.json if version changed or we don't have words yet
+        if (dbVersion !== versionData.version || words.length === 0) {
+          const wordsResponse = await fetch(`${import.meta.env.BASE_URL}data/words.json`);
+          if (!wordsResponse.ok) {
+            throw new Error('Failed to load words database');
+          }
+
+          const data: WordsDatabase = await wordsResponse.json();
           loadWords(data.words, data.version);
         }
 

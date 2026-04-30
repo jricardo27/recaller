@@ -9,19 +9,54 @@ global.fetch = mockFetch;
 describe('words.json fetch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
 
-    // Mock successful fetch response
+  it('should fetch version.json first, then words.json when version changes', async () => {
+    // Mock version.json response
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          version: '1.0.0',
+          wordCount: 100
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          version: '1.0.0',
+          wordCount: 100,
+          words: []
+        })
+      });
+
+    render(<App />);
+
+    // Wait for the fetch calls to be made
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    // Verify version.json was fetched first
+    const fetchCalls = mockFetch.mock.calls;
+    const versionJsonCall = fetchCalls[0];
+    expect(versionJsonCall[0]).toMatch(/\/recaller\/.*data\/version\.json$/);
+
+    // Verify words.json was fetched second
+    const wordsJsonCall = fetchCalls[1];
+    expect(wordsJsonCall[0]).toMatch(/\/recaller\/.*data\/words\.json$/);
+  });
+
+  it('should not fetch words.json when version has not changed', async () => {
+    // Mock version.json response
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
         version: '1.0.0',
-        wordCount: 100,
-        words: []
+        wordCount: 100
       })
     });
-  });
 
-  it('should fetch words.json using BASE_URL', async () => {
     render(<App />);
 
     // Wait for the fetch call to be made
@@ -29,14 +64,42 @@ describe('words.json fetch', () => {
       expect(mockFetch).toHaveBeenCalled();
     });
 
-    // Verify the fetch was called with the correct URL containing BASE_URL
+    // Verify only version.json was fetched, not words.json
+    expect(mockFetch).toHaveBeenCalledTimes(1);
     const fetchCalls = mockFetch.mock.calls;
-    const wordsJsonCall = fetchCalls.find(call =>
-      call[0].includes('data/words.json')
-    );
+    const versionJsonCall = fetchCalls[0];
+    expect(versionJsonCall[0]).toMatch(/\/recaller\/.*data\/version\.json$/);
+  });
 
-    expect(wordsJsonCall).toBeTruthy();
-    // The URL should use BASE_URL (which is /recaller/ in vite.config.ts)
-    expect(wordsJsonCall[0]).toMatch(/\/recaller\/.*data\/words\.json$/);
+  it('should fetch words.json when version changes', async () => {
+    // Mock version.json response with new version
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          version: '2.0.0',
+          wordCount: 200
+        })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          version: '2.0.0',
+          wordCount: 200,
+          words: []
+        })
+      });
+
+    render(<App />);
+
+    // Wait for the fetch calls to be made
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    // Verify both version.json and words.json were fetched
+    const fetchCalls = mockFetch.mock.calls;
+    expect(fetchCalls[0][0]).toMatch(/\/recaller\/.*data\/version\.json$/);
+    expect(fetchCalls[1][0]).toMatch(/\/recaller\/.*data\/words\.json$/);
   });
 });
