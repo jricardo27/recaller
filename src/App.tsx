@@ -21,7 +21,7 @@ function App() {
   const [selectedExerciseType, setSelectedExerciseType] = useState<ExerciseType | null>(null);
 
   const stats = useWordStore(state => state.getStats());
-  const words = useWordStore(state => state.words);
+  const wordsCount = useWordStore(state => state.words.length);
   const dbVersion = useWordStore(state => state.dbVersion);
   const loadWords = useWordStore(state => state.loadWords);
   const exerciseStats = useExerciseStore(state => state.stats);
@@ -41,7 +41,7 @@ function App() {
         setDbInfo({ version: versionData.version, count: versionData.wordCount });
 
         // Only fetch full words.json if version changed or we don't have words yet
-        if (dbVersion !== versionData.version || words.length === 0) {
+        if (dbVersion !== versionData.version || wordsCount === 0) {
           const wordsResponse = await fetch(`${import.meta.env.BASE_URL}data/words.json`);
           if (!wordsResponse.ok) {
             throw new Error('Failed to load words database');
