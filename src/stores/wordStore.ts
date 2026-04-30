@@ -46,7 +46,18 @@ export const useWordStore = create<WordState>()(
       session: null,
 
       loadWords: (words, version) => {
-        set({ words, dbVersion: version });
+        set((state) => {
+          const prevEnabled = new Map(state.words.map(w => [w.id, w.enabled]));
+          const newIds = new Set(words.map(w => w.id));
+          const cards = Object.fromEntries(
+            Object.entries(state.cards).filter(([id]) => newIds.has(Number(id)))
+          );
+          return {
+            words: words.map(w => ({ ...w, enabled: prevEnabled.get(w.id) ?? w.enabled })),
+            cards,
+            dbVersion: version
+          };
+        });
       },
 
       startSession: () => {
