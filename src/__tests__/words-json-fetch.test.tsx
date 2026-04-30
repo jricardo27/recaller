@@ -9,6 +9,7 @@ global.fetch = mockFetch;
 describe('words.json fetch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it('should fetch version.json first, then words.json when version changes', async () => {
@@ -48,7 +49,17 @@ describe('words.json fetch', () => {
   });
 
   it('should not fetch words.json when version has not changed', async () => {
-    // Mock version.json response
+    // Pre-populate localStorage with existing words and version
+    localStorage.setItem('hanzi-memory-storage', JSON.stringify({
+      state: {
+        words: [{ id: 1, hanzi: 'test', pinyin: 'test', english: 'test', enabled: true }],
+        dbVersion: '1.0.0',
+        cards: {}
+      },
+      version: 0
+    }));
+
+    // Mock version.json response with same version
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({
