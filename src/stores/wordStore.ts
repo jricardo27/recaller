@@ -8,12 +8,13 @@ interface WordState {
   // Data
   words: Word[];
   cards: Record<number, Card>;
+  dbVersion: string;
   
   // Session
   session: StudySession | null;
   
   // Actions
-  loadWords: (words: Word[]) => void;
+  loadWords: (words: Word[], version: string) => void;
   startSession: () => void;
   rateCard: (wordId: number, quality: Quality) => void;
   toggleWord: (wordId: number) => void;
@@ -41,10 +42,22 @@ export const useWordStore = create<WordState>()(
     (set, get) => ({
       words: [],
       cards: {},
+      dbVersion: '',
       session: null,
 
-      loadWords: (words) => {
-        set({ words });
+      loadWords: (words, version) => {
+        set((state) => {
+          const prevEnabled = new Map(state.words.map(w => [w.id, w.enabled]));
+          const newIds = new Set(words.map(w => w.id));
+          const cards = Object.fromEntries(
+            Object.entries(state.cards).filter(([id]) => newIds.has(Number(id)))
+          );
+          return {
+            words: words.map(w => ({ ...w, enabled: prevEnabled.get(w.id) ?? w.enabled })),
+            cards,
+            dbVersion: version
+          };
+        });
       },
 
       startSession: () => {
@@ -235,7 +248,8 @@ export const useWordStore = create<WordState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         cards: state.cards,
-        words: state.words
+        words: state.words,
+        dbVersion: state.dbVersion
       })
     }
   )

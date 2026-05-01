@@ -56,6 +56,7 @@ describe('Exercise session persistence', () => {
       const state = {
         words: [],
         cards: {},
+        dbVersion: '',
         session: null,
         loadWords: vi.fn(),
         startSession: vi.fn(),

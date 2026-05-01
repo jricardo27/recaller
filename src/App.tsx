@@ -21,7 +21,8 @@ function App() {
   const [selectedExerciseType, setSelectedExerciseType] = useState<ExerciseType | null>(null);
 
   const stats = useWordStore(state => state.getStats());
-  const words = useWordStore(state => state.words);
+  const wordsCount = useWordStore(state => state.words.length);
+  const dbVersion = useWordStore(state => state.dbVersion);
   const loadWords = useWordStore(state => state.loadWords);
   const exerciseStats = useExerciseStore(state => state.stats);
   const endSession = useExerciseStore(state => state.endSession);
@@ -30,17 +31,24 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}data/words.json`);
-        if (!response.ok) {
-          throw new Error('Failed to load words database');
+        // First, fetch version.json to check if update is needed
+        const versionResponse = await fetch(import.meta.env.BASE_URL + 'data/version.json', { cache: 'no-cache' });
+        if (!versionResponse.ok) {
+          throw new Error('Failed to load version info');
         }
 
-        const data: WordsDatabase = await response.json();
-        setDbInfo({ version: data.version, count: data.wordCount });
+        const versionData = await versionResponse.json();
+        setDbInfo({ version: versionData.version, count: versionData.wordCount });
 
-        // Only load if we don't have words yet
-        if (words.length === 0) {
-          loadWords(data.words);
+        // Only fetch full words.json if version changed or we don't have words yet
+        if (dbVersion !== versionData.version || wordsCount === 0) {
+          const wordsResponse = await fetch(`${import.meta.env.BASE_URL}data/words.json`);
+          if (!wordsResponse.ok) {
+            throw new Error('Failed to load words database');
+          }
+
+          const data: WordsDatabase = await wordsResponse.json();
+          loadWords(data.words, data.version);
         }
 
         setLoading(false);
