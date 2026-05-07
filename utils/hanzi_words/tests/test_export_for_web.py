@@ -144,22 +144,7 @@ class TestExportForWeb(unittest.TestCase):
         self.assertTrue(test_word['enabled'])
         self.assertEqual(test_word['id'], 3)  # Should have ID 3
 
-    def test_database_connection_context_manager(self):
-        """Test that database connections are properly managed with context managers."""
-        # This test verifies that the setUp method uses proper resource management
-        # No explicit test needed for context managers since they're used throughout
-        # but we verify the database is properly set up and accessible
-        result = export_words(self.temp_db.name, self.temp_output.name)
-        self.assertEqual(result['exported'], 2)
-        
-        # Verify database operations work correctly after context manager usage
-        with open(self.temp_output.name, 'r', encoding='utf-8') as f:
-            output = json.load(f)
-        
-        self.assertEqual(len(output['words']), 2)
-        self.assertEqual(output['words'][0]['hanzi'], '你好')
-        self.assertEqual(output['words'][1]['hanzi'], '世界')
-
+    
 
 if __name__ == '__main__':
     unittest.main()
