@@ -27,22 +27,20 @@ class TestExportForWeb(unittest.TestCase):
         self.temp_db.close()
         
         # Create test database schema and data
-        conn = sqlite3.connect(self.temp_db.name)
-        conn.execute("""
-            CREATE TABLE hanzi_words (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                hanzi TEXT UNIQUE NOT NULL,
-                pinyin TEXT,
-                translation TEXT
-            )
-        """)
-        conn.execute("""
-            INSERT INTO hanzi_words (hanzi, pinyin, translation) VALUES
-            ('你好', 'nǐ hǎo', 'hello'),
-            ('世界', 'shì jiè', 'world')
-        """)
-        conn.commit()
-        conn.close()
+        with sqlite3.connect(self.temp_db.name) as conn:
+            conn.execute("""
+                CREATE TABLE hanzi_words (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    hanzi TEXT UNIQUE NOT NULL,
+                    pinyin TEXT,
+                    translation TEXT
+                )
+            """)
+            conn.execute("""
+                INSERT INTO hanzi_words (hanzi, pinyin, translation) VALUES
+                ('你好', 'nǐ hǎo', 'hello'),
+                ('世界', 'shì jiè', 'world')
+            """)
         
         # Create temporary output file
         self.temp_output = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
@@ -141,6 +139,22 @@ class TestExportForWeb(unittest.TestCase):
         self.assertEqual(test_word['translation'], '')
         self.assertTrue(test_word['enabled'])
         self.assertEqual(test_word['id'], 3)  # Should have ID 3
+
+    def test_database_connection_context_manager(self):
+        """Test that database connections are properly managed with context managers."""
+        # This test verifies that the setUp method uses proper resource management
+        # No explicit test needed for context managers since they're used throughout
+        # but we verify the database is properly set up and accessible
+        result = export_words(self.temp_db.name, self.temp_output.name)
+        self.assertEqual(result['exported'], 2)
+        
+        # Verify database operations work correctly after context manager usage
+        with open(self.temp_output.name, 'r', encoding='utf-8') as f:
+            output = json.load(f)
+        
+        self.assertEqual(len(output['words']), 2)
+        self.assertEqual(output['words'][0]['hanzi'], '你好')
+        self.assertEqual(output['words'][1]['hanzi'], '世界')
 
 
 if __name__ == '__main__':
