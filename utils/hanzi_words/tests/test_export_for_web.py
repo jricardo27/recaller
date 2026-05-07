@@ -123,11 +123,13 @@ class TestExportForWeb(unittest.TestCase):
     def test_export_with_null_values(self):
         """Test export with null pinyin and translation values."""
         # Add word with null values to test database
-        with sqlite3.connect(self.temp_db.name) as conn:
+        conn = sqlite3.connect(self.temp_db.name)
+        with conn:
             conn.execute(
                 "INSERT INTO hanzi_words (hanzi, pinyin, translation) VALUES (?, ?, ?)",
                 ("测试", None, None)
             )
+        conn.close()
         
         result = export_words(self.temp_db.name, self.temp_output.name)
         self.assertEqual(result['exported'], 3)
