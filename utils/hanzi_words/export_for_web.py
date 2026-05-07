@@ -6,6 +6,7 @@ Export hanzi words from SQLite to JSON for web app usage.
 import sqlite3
 import json
 import argparse
+import zlib
 from pathlib import Path
 from datetime import datetime
 
@@ -31,24 +32,33 @@ def export_words(db_path: str, output_path: str) -> dict:
 
     if not db_path.exists():
         raise FileNotFoundError(f"Database not found: {db_path}")
-    
+
+    def make_id(hanzi: str) -> int:
+        """Generate a consistent numeric ID from hanzi string."""
+        # Use CRC32 to generate a stable, positive 32-bit integer from hanzi
+        return zlib.crc32(hanzi.encode('utf-8')) & 0x7FFFFFFF
+
     conn = sqlite3.connect(str(db_path))
     cursor = conn.execute(
-        "SELECT id, hanzi, pinyin, translation FROM hanzi_words ORDER BY id"
+        "SELECT hanzi, pinyin, translation FROM hanzi_words"
     )
-    
+
     words = []
     for row in cursor:
+        hanzi = row[0]
         words.append({
-            "id": row[0],
-            "hanzi": row[1],
-            "pinyin": row[2] or "",
-            "translation": row[3] or "",
+            "id": make_id(hanzi),
+            "hanzi": hanzi,
+            "pinyin": row[1] or "",
+            "translation": row[2] or "",
             "enabled": True
         })
-    
+
     conn.close()
-    
+
+    # Sort alphabetically by hanzi for consistent output
+    words.sort(key=lambda w: w["hanzi"])
+
     output = {
         "version": "1.0",
         "exportedAt": datetime.now().isoformat(),
