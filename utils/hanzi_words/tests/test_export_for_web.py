@@ -145,7 +145,6 @@ class TestExportForWeb(unittest.TestCase):
         self.assertTrue(test_word['enabled'])
         self.assertEqual(test_word['id'], 3)  # Should have ID 3
 
-    
 
 if __name__ == '__main__':
     unittest.main()
