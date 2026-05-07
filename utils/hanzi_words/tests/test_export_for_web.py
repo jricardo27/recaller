@@ -102,6 +102,48 @@ class TestExportForWeb(unittest.TestCase):
         expected_filename = Path(abs_db_path).name
         self.assertEqual(output['source'], expected_filename)
 
+    def test_database_ids_preserved(self):
+        """Test that database IDs are preserved and ordered correctly."""
+        result = export_words(self.temp_db.name, self.temp_output.name)
+        
+        with open(self.temp_output.name, 'r', encoding='utf-8') as f:
+            output = json.load(f)
+        
+        # Words should be ordered by database ID
+        self.assertEqual(output['words'][0]['id'], 1)
+        self.assertEqual(output['words'][0]['hanzi'], '你好')
+        
+        self.assertEqual(output['words'][1]['id'], 2)
+        self.assertEqual(output['words'][1]['hanzi'], '世界')
+        
+        # Verify IDs are integers (not strings)
+        self.assertIsInstance(output['words'][0]['id'], int)
+        self.assertIsInstance(output['words'][1]['id'], int)
+
+    def test_export_with_null_values(self):
+        """Test export with null pinyin and translation values."""
+        # Add word with null values to test database
+        conn = sqlite3.connect(self.temp_db.name)
+        conn.execute(
+            "INSERT INTO hanzi_words (hanzi, pinyin, translation) VALUES (?, ?, ?)",
+            ("测试", None, None)
+        )
+        conn.commit()
+        conn.close()
+        
+        result = export_words(self.temp_db.name, self.temp_output.name)
+        self.assertEqual(result['exported'], 3)
+        
+        with open(self.temp_output.name, 'r', encoding='utf-8') as f:
+            output = json.load(f)
+        
+        # Find the word with null values
+        test_word = next(w for w in output['words'] if w['hanzi'] == '测试')
+        self.assertEqual(test_word['pinyin'], '')
+        self.assertEqual(test_word['translation'], '')
+        self.assertTrue(test_word['enabled'])
+        self.assertEqual(test_word['id'], 3)  # Should have ID 3
+
 
 if __name__ == '__main__':
     unittest.main()
