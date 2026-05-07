@@ -31,12 +31,12 @@ def export_words(db_path: str, output_path: str) -> dict:
 
     if not db_path.exists():
         raise FileNotFoundError(f"Database not found: {db_path}")
-    
+
     conn = sqlite3.connect(str(db_path))
     cursor = conn.execute(
         "SELECT id, hanzi, pinyin, translation FROM hanzi_words ORDER BY id"
     )
-    
+
     words = []
     for row in cursor:
         words.append({
@@ -46,9 +46,9 @@ def export_words(db_path: str, output_path: str) -> dict:
             "translation": row[3] or "",
             "enabled": True
         })
-    
+
     conn.close()
-    
+
     output = {
         "version": "1.0",
         "exportedAt": datetime.now().isoformat(),
