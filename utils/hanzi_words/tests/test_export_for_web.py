@@ -138,7 +138,8 @@ class TestExportForWeb(unittest.TestCase):
             output = json.load(f)
         
         # Find the word with null values
-        test_word = next(w for w in output['words'] if w['hanzi'] == '测试')
+        test_word = next((w for w in output['words'] if w['hanzi'] == '测试'), None)
+        self.assertIsNotNone(test_word, "Word '测试' not found in exported output")
         self.assertEqual(test_word['pinyin'], '')
         self.assertEqual(test_word['translation'], '')
         self.assertTrue(test_word['enabled'])
