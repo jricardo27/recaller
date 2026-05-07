@@ -27,7 +27,8 @@ class TestExportForWeb(unittest.TestCase):
         self.temp_db.close()
         
         # Create test database schema and data
-        with sqlite3.connect(self.temp_db.name) as conn:
+        conn = sqlite3.connect(self.temp_db.name)
+        with conn:
             conn.execute("""
                 CREATE TABLE hanzi_words (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,6 +42,7 @@ class TestExportForWeb(unittest.TestCase):
                 ('你好', 'nǐ hǎo', 'hello'),
                 ('世界', 'shì jiè', 'world')
             """)
+        conn.close()
         
         # Create temporary output file
         self.temp_output = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
